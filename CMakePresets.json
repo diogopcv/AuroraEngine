@@ -1,0 +1,49 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base-windows",
+      "hidden": true,
+      "description": "Shared base settings for Windows presets.",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "ENGINE_WARNINGS_AS_ERRORS": "ON"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "windows-ninja",
+      "displayName": "Windows x64 (Ninja Multi-Config, MSVC)",
+      "description": "Use with VS Code or external CLI tools within the Developer Command Prompt.",
+      "inherits": "base-windows",
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release;RelWithDebInfo"
+      },
+      "architecture": { "value": "x64", "strategy": "external" }
+    },
+    {
+      "name": "windows-vs",
+      "displayName": "Windows x64 (Visual Studio 2026 solution)",
+      "description": "Generate .sln to be opened in Visual Studio 2026.",
+      "inherits": "base-windows",
+      "generator": "Visual Studio 18 2026",
+      "architecture": "x64"
+    }
+  ],
+  "buildPresets": [
+    { "name": "ninja-debug", "displayName": "Ninja Debug", "configurePreset": "windows-ninja", "configuration": "Debug" },
+    { "name": "ninja-release", "displayName": "Ninja Release", "configurePreset": "windows-ninja", "configuration": "Release" },
+    { "name": "ninja-relwithdebinfo", "displayName": "Ninja RelWithDebInfo", "configurePreset": "windows-ninja", "configuration": "RelWithDebInfo" },
+    { "name": "vs-debug", "displayName": "VS 2026 Debug", "configurePreset": "windows-vs", "configuration": "Debug" },
+    { "name": "vs-release", "displayName": "VS 2026 Release", "configurePreset": "windows-vs", "configuration": "Release" },
+    { "name": "vs-relwithdebinfo",    "displayName": "VS 2026 RelWithDebInfo", "configurePreset": "windows-vs", "configuration": "RelWithDebInfo" }
+  ]
+}

@@ -39,9 +39,6 @@ void vwrite(LogLevel level, const char* file, i32 line, std::string_view fmt, st
 
 template <typename... Args>
 void write(LogLevel level, const char* file, i32 line, std::format_string<Args...> fmt, Args&&... args) {
-    if (level < aurora::logging::min_level) {
-        return;
-    }
     vwrite(level, file, line, fmt.get(), std::make_format_args(args...));
 }
 
@@ -49,8 +46,13 @@ void write(LogLevel level, const char* file, i32 line, std::format_string<Args..
 } // namespace logging
 } // namespace aurora
 
-#define AURORA_LOG(level, fmt, ...) \
-    ::aurora::logging::detail::write((level), __FILE__, __LINE__, fmt __VA_OPT__(,) __VA_ARGS__)
+#define AURORA_LOG(level, ...)                                                \
+    do {                                                                      \
+        if constexpr ((level) >= ::aurora::logging::min_level) {              \
+            ::aurora::logging::detail::write(                                 \
+                (level), __FILE__, __LINE__, __VA_ARGS__);                    \
+        }                                                                     \
+    } while (0)
 
 #if AURORA_DEBUG
     #define AURORA_LOG_TRACE(fmt, ...) AURORA_LOG(::aurora::LogLevel::Trace, fmt __VA_OPT__(,) __VA_ARGS__)

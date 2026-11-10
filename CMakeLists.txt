@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.25)
 project(aurora
     VERSION 0.1.0
     DESCRIPTION "3D Game Engine for learning: C++20, Win32, DirectX 12"
-    LANGUAGES CXX C)
+    LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

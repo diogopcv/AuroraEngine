@@ -12,9 +12,9 @@ void report_failure(const char* kind, const char* expression, const char* file, 
     std::string_view text;
 
     if (expression != nullptr && !message.empty()) {
-        text = logging::detail::vformat_into(buffer, "{} falhou: {} | {}", std::make_format_args(kind, expression, message));
+        text = logging::detail::vformat_into(buffer, "{} failed: {} | {}", std::make_format_args(kind, expression, message));
     } else if (expression != nullptr) {
-        text = logging::detail::vformat_into(buffer, "{} falhou: {}", std::make_format_args(kind, expression));
+        text = logging::detail::vformat_into(buffer, "{} failed: {}", std::make_format_args(kind, expression));
     } else {
         text = message;
     }

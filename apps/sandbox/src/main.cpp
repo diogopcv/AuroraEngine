@@ -34,13 +34,6 @@ bool has_arg(int argc, char** argv, const char* name) {
     return false;
 }
 
-i32 resources_open = 1;
-
-bool close_resource() {
-    --resources_open;
-    return resources_open == 0;
-}
-
 } // namespace
 
 int main(int argc, char** argv) {
@@ -50,9 +43,6 @@ int main(int argc, char** argv) {
     AURORA_LOG_TRACE("trace only appears in Debug mode: {} + {} = {}", 2, 3, 2 + 3);
     AURORA_LOG_INFO("u64 has {} bytes, usize has {} bytes", sizeof(u64), sizeof(usize));
     AURORA_LOG_WARN("this is an example warning");
-
-    AURORA_ASSERT(close_resource());
-    AURORA_ASSERT(resources_open == 0);
 
     if (has_arg(argc, argv, "--assert")) {
         const i32 index = 7;

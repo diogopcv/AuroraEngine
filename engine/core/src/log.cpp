@@ -1,8 +1,9 @@
-#include "core/log.h"
-
 #include <atomic>
 #include <cstdio>
 #include <iterator>
+
+#include "core/log.h"
+#include "core/assert.h"
 
 namespace aurora {
 namespace logging {
@@ -59,6 +60,7 @@ struct FixedText {
 
 void add_sink(LogSinkFn fn, void* user_data) {
     const usize count = g_sink_count.load(std::memory_order_relaxed);
+    AURORA_ASSERT(count < max_sinks, "sink limit of {} reached", max_sinks);
     if (count == max_sinks) {
         return;
     }

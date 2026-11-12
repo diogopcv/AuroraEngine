@@ -54,12 +54,7 @@ void write(LogLevel level, const char* file, i32 line, std::format_string<Args..
         }                                                                     \
     } while (0)
 
-#if AURORA_DEBUG
-    #define AURORA_LOG_TRACE(fmt, ...) AURORA_LOG(::aurora::LogLevel::Trace, fmt __VA_OPT__(,) __VA_ARGS__)
-#else
-    #define AURORA_LOG_TRACE(fmt, ...) ((void)0)
-#endif
-
-#define AURORA_LOG_INFO(fmt, ...)  AURORA_LOG(::aurora::LogLevel::Info,  fmt __VA_OPT__(,) __VA_ARGS__)
-#define AURORA_LOG_WARN(fmt, ...)  AURORA_LOG(::aurora::LogLevel::Warn,  fmt __VA_OPT__(,) __VA_ARGS__)
-#define AURORA_LOG_ERROR(fmt, ...) AURORA_LOG(::aurora::LogLevel::Error, fmt __VA_OPT__(,) __VA_ARGS__)
+#define AURORA_LOG_TRACE(...) AURORA_LOG(::aurora::LogLevel::Trace, __VA_ARGS__)
+#define AURORA_LOG_INFO(...)  AURORA_LOG(::aurora::LogLevel::Info,  __VA_ARGS__)
+#define AURORA_LOG_WARN(...)  AURORA_LOG(::aurora::LogLevel::Warn,  __VA_ARGS__)
+#define AURORA_LOG_ERROR(...) AURORA_LOG(::aurora::LogLevel::Error, __VA_ARGS__)

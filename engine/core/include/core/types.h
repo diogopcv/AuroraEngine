@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 
 #if !defined(AURORA_DEBUG)
     #define AURORA_DEBUG 0
@@ -26,5 +27,8 @@ using iptr = std::intptr_t;
 constexpr u64 operator""_KB(unsigned long long v) { return v * 1024ull; }
 constexpr u64 operator""_MB(unsigned long long v) { return v * 1024_KB; }
 constexpr u64 operator""_GB(unsigned long long v) { return v * 1024_MB; }
+
+static_assert(sizeof(void*) == 8, "Aurora requires a 64-bit target");
+static_assert(std::numeric_limits<float>::is_iec559 && std::numeric_limits<double>::is_iec559, "Aurora requires IEEE 754 floating point");
 
 } // namespace aurora

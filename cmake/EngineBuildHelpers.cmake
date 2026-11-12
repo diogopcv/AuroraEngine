@@ -9,7 +9,7 @@ function(engine_configure_target target)
             /W4             # high level warnings
             /permissive-    # strict standard conformance
             /utf-8          # source code and literals in UTF-8
-            /Zc:preprocessor  # standard conforming preprocessor (needed for __VA_OPT__)
+            /Zc:preprocessor  # standard conforming preprocessors
             /Zc:__cplusplus   # __cplusplus with the real value
             /MP             # compile files in parallel
         )

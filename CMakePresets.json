@@ -45,5 +45,11 @@
     { "name": "vs-debug", "displayName": "VS 2026 Debug", "configurePreset": "windows-vs", "configuration": "Debug" },
     { "name": "vs-release", "displayName": "VS 2026 Release", "configurePreset": "windows-vs", "configuration": "Release" },
     { "name": "vs-relwithdebinfo",    "displayName": "VS 2026 RelWithDebInfo", "configurePreset": "windows-vs", "configuration": "RelWithDebInfo" }
+  ],
+  "testPresets": [
+    { "name": "ninja-debug",   "displayName": "Ninja Debug tests",   "configurePreset": "windows-ninja", "configuration": "Debug",   "output": { "outputOnFailure": true } },
+    { "name": "ninja-release", "displayName": "Ninja Release tests", "configurePreset": "windows-ninja", "configuration": "Release", "output": { "outputOnFailure": true } },
+    { "name": "vs-debug",      "displayName": "VS 2026 Debug tests",   "configurePreset": "windows-vs", "configuration": "Debug",   "output": { "outputOnFailure": true } },
+    { "name": "vs-release",    "displayName": "VS 2026 Release tests", "configurePreset": "windows-vs", "configuration": "Release", "output": { "outputOnFailure": true } }
   ]
 }

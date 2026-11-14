@@ -12,6 +12,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 option(ENGINE_WARNINGS_AS_ERRORS "Treats warnings as errors" ON)
+option(ENGINE_BUILD_TESTS "Build unit tests" ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -23,3 +24,8 @@ include(cmake/EngineBuildHelpers.cmake)
 
 add_subdirectory(engine)
 add_subdirectory(apps/sandbox)
+
+if(ENGINE_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()

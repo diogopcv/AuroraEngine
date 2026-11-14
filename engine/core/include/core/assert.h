@@ -16,16 +16,21 @@
 #endif
 
 namespace aurora {
+
+using AssertHandler = bool (*)(const char* expression, const char* file, i32 line, std::string_view message);
+
+void set_assert_handler(AssertHandler handler);
+
 namespace detail {
 
-void report_failure(const char* kind, const char* expression, const char* file, i32 line, std::string_view message);
+bool report_failure(const char* kind, const char* expression, const char* file, i32 line, std::string_view message);
 
 [[noreturn]] void fatal_exit();
 
 template <typename... Args>
-void report_failure_fmt(const char* kind, const char* expression, const char* file, i32 line, std::format_string<Args...> fmt, Args&&... args) {
+bool report_failure_fmt(const char* kind, const char* expression, const char* file, i32 line, std::format_string<Args...> fmt, Args&&... args) {
     char buffer[logging::max_message_length];
-    report_failure(kind, expression, file, line, logging::detail::vformat_into(buffer, fmt.get(), std::make_format_args(args...)));
+    return report_failure(kind, expression, file, line, logging::detail::vformat_into(buffer, fmt.get(), std::make_format_args(args...)));
 }
 
 } // namespace detail
@@ -35,17 +40,18 @@ void report_failure_fmt(const char* kind, const char* expression, const char* fi
     do {                                                                      \
         if constexpr (AURORA_ASSERTS_ENABLED) {                               \
             if (!(cond)) [[unlikely]] {                                       \
-                ::aurora::detail::report_failure_fmt(                         \
-                    "ASSERT", #cond, __FILE__, __LINE__, "" __VA_ARGS__);     \
-                AURORA_DEBUG_BREAK();                                         \
+                if (::aurora::detail::report_failure_fmt(                     \
+                        "ASSERT", #cond, __FILE__, __LINE__, "" __VA_ARGS__)) { \
+                    AURORA_DEBUG_BREAK();                                     \
+                }                                                             \
             }                                                                 \
         }                                                                     \
     } while (0)
 
 #define AURORA_FATAL(...)                                                     \
     do {                                                                      \
-        ::aurora::detail::report_failure_fmt(                                 \
-            "FATAL", nullptr, __FILE__, __LINE__, __VA_ARGS__);               \
+        static_cast<void>(::aurora::detail::report_failure_fmt(               \
+            "FATAL", nullptr, __FILE__, __LINE__, __VA_ARGS__));              \
         if constexpr (AURORA_ASSERTS_ENABLED) {                               \
             AURORA_DEBUG_BREAK();                                             \
         }                                                                     \

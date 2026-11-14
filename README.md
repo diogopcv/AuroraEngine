@@ -2,7 +2,7 @@
 
 Aurora is a 3D game engine written from scratch in C++20 as a learning project. It targets Windows through the Win32 API and renders with DirectX 12.
 
-> **Status:** early development, Stage 1 (Foundation), step 1 (core layer). The build system, logging and assertions are in place (sub-steps 1.1 and 1.2). Next is 1.3: unit tests with doctest and an assert handler. The [Target architecture](#target-architecture) and [Roadmap](#roadmap) sections describe where the engine is going, not what exists today.
+> **Status:** early development, Stage 1 (Foundation), step 1 (core layer). The build system, logging, assertions and unit tests are in place (sub-steps 1.1 to 1.3). Next is the memory infrastructure (1.4 onwards). The [Target architecture](#target-architecture) and [Roadmap](#roadmap) sections describe where the engine is going, not what exists today.
 
 ## Goals
 
@@ -69,6 +69,17 @@ Install the **CMake Tools** extension, select the `windows-ninja` configure pres
 
 MSVC builds with `/W4 /permissive- /utf-8 /Zc:preprocessor /Zc:__cplusplus /MP`. Warnings are errors (`/WX`) while the `ENGINE_WARNINGS_AS_ERRORS` option is on, which is the default.
 
+### Running the tests
+
+Unit tests use [doctest](https://github.com/doctest/doctest), fetched by CMake at a pinned version, and run through CTest. They are built by default; configure with `-DENGINE_BUILD_TESTS=OFF` to skip them.
+
+```powershell
+cmake --build --preset ninja-debug
+ctest --preset ninja-debug
+```
+
+Each test case is a separate CTest entry, so failures show by name. The test executable can also be run directly, for example `.\build\windows-ninja\bin\Debug\core_tests.exe --test-case="*assert*"`.
+
 ### Running the sandbox
 
 The sandbox exercises the core module. Two optional arguments show the failure paths:
@@ -90,6 +101,9 @@ AuroraEngine/
 │   ├── core/                     Types, logging, assertions
 │   ├── math/                     Placeholder (Stage 1, step 3)
 │   └── platform/                 Placeholder (Stage 1, step 2)
+├── tests/
+│   ├── framework/                Test main (doctest) and CHECK_ASSERTS
+│   └── core/                     Unit tests for the core module
 ├── CMakeLists.txt
 └── CMakePresets.json
 ```
@@ -153,6 +167,8 @@ AURORA_ASSERT(closed);
 ```
 
 Assertions are for programming errors. Expected failures, such as a missing file, are reported through return values.
+
+`aurora::set_assert_handler()` replaces what happens after a failure is logged: the handler returns whether to break into the debugger. The test runner installs a handler that counts failures instead of breaking, so tests can check that an assert fires with `CHECK_ASSERTS(statement)`. `AURORA_FATAL` always aborts, whatever the handler returns.
 
 ## Target architecture
 

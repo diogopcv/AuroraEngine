@@ -2,6 +2,7 @@ engine_add_tests(core
     SOURCES
         log_tests.cpp
         assert_tests.cpp
+        virtual_memory_tests.cpp
         framework_selftests.cpp)
 
 add_test(NAME core_tests.selftest.exit_code

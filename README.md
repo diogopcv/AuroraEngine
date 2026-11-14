@@ -69,6 +69,8 @@ Install the **CMake Tools** extension, select the `windows-ninja` configure pres
 
 MSVC builds with `/W4 /permissive- /utf-8 /Zc:preprocessor /Zc:__cplusplus /MP`. Warnings are errors (`/WX`) while the `ENGINE_WARNINGS_AS_ERRORS` option is on, which is the default.
 
+Engine targets use a precompiled header with the standard library headers that the core headers include (`<format>`, `<atomic>`, `<string_view>` and a few others). It is controlled by the `ENGINE_USE_PCH` option, on by default. Engine headers are not precompiled, so every file still includes what it uses; configure with `-DENGINE_USE_PCH=OFF` from time to time to check that.
+
 ### Running the tests
 
 Unit tests use [doctest](https://github.com/doctest/doctest), fetched by CMake at a pinned version, and run through CTest. They are built by default; configure with `-DENGINE_BUILD_TESTS=OFF` to skip them.
@@ -78,7 +80,9 @@ cmake --build --preset ninja-debug
 ctest --preset ninja-debug
 ```
 
-Each test case is a separate CTest entry, so failures show by name. The test executable can also be run directly, for example `.\build\windows-ninja\bin\Debug\core_tests.exe --test-case="*assert*"`.
+Each test case is a separate CTest entry, so failures show by name. Test suites become CTest labels, so `ctest --preset ninja-debug -L log` runs only the logging tests. The test executable can also be run directly, for example `.\build\windows-ninja\bin\Debug\core_tests.exe --test-case="*assert*"`.
+
+Each layer has its own test executable (`core_tests`, later `math_tests` and so on). To add a test file, list it in `tests/<layer>/CMakeLists.txt`; to add a layer, create that file with `engine_add_tests(<layer> SOURCES ... DEPS aurora::<layer>)` and add the folder to `tests/CMakeLists.txt`.
 
 ### Running the sandbox
 
@@ -96,14 +100,13 @@ AuroraEngine/
 ├── apps/
 │   └── sandbox/                  Test application for the engine
 ├── cmake/
-│   └── EngineBuildHelpers.cmake  engine_add_layer() and engine_add_executable()
+│   └── EngineBuildHelpers.cmake  Compiler flags, precompiled header, engine_add_layer(), engine_add_executable()
 ├── engine/
 │   ├── core/                     Types, logging, assertions
-│   ├── math/                     Placeholder (Stage 1, step 3)
 │   └── platform/                 Placeholder (Stage 1, step 2)
 ├── tests/
 │   ├── framework/                Test main (doctest) and CHECK_ASSERTS
-│   └── core/                     Unit tests for the core module
+│   └── core/                     Unit tests for the core module (core_tests)
 ├── CMakeLists.txt
 └── CMakePresets.json
 ```
@@ -280,5 +283,6 @@ Steps have closed scopes on purpose. For example, ambient occlusion, reflections
 - Namespace `aurora`; every macro starts with `AURORA_`; targets are aliased `aurora::<layer>`.
 - No exceptions in engine code. Programming errors are assertions; expected failures are return values. Test code in `tests/` may use exceptions.
 - UTF-8 for all source code and strings. Conversion to UTF-16 happens only inside Win32 code.
-- Every shared structure documents its threading contract: who writes, who reads, on which thread, how they synchronize and which lock remains. Every allocation has a named owner.
+- Every shared structure has a documented threading contract: who writes, who reads, on which thread, how they synchronize and which lock remains. Every allocation has a named owner.
+- Code comments are short and explain only what the code cannot. Memory orderings are always explicit.
 - Math: right-handed, Y up, column vectors, column-major matrices, reversed-Z depth, radians.

@@ -1,3 +1,14 @@
+# Precompiled header shared by every engine target (D36): only the standard headers that the
+# core public headers (types.h, log.h, assert.h) include. Engine headers stay out, so each file
+# still includes what it uses; build with ENGINE_USE_PCH=OFF to check that.
+set(ENGINE_PCH_HEADERS
+    <atomic>
+    <cstddef>
+    <cstdint>
+    <format>
+    <limits>
+    <string_view>)
+
 # Compilation flags common to all code (third-party libraries do not use this).
 function(engine_configure_target target)
     target_compile_features(${target} PUBLIC cxx_std_20)
@@ -21,6 +32,10 @@ function(engine_configure_target target)
         if(ENGINE_WARNINGS_AS_ERRORS)
             target_compile_options(${target} PRIVATE -Werror)
         endif()
+    endif()
+
+    if(ENGINE_USE_PCH)
+        target_precompile_headers(${target} PRIVATE ${ENGINE_PCH_HEADERS})
     endif()
 endfunction()
 

@@ -1,4 +1,4 @@
-# Precompiled header shared by every engine target (D36): only the standard headers that the
+# Precompiled header shared by every engine target: only the standard headers that the
 # core public headers (types.h, log.h, assert.h) include. Engine headers stay out, so each file
 # still includes what it uses; build with ENGINE_USE_PCH=OFF to check that.
 set(ENGINE_PCH_HEADERS
@@ -69,7 +69,7 @@ function(engine_add_executable name)
     cmake_parse_arguments(ARG "" "" "SOURCES;DEPS" ${ARGN})
 
     add_executable(${name} ${ARG_SOURCES})
-    target_link_libraries(${name} PRIVATE ${ARG_DEPS})
+    target_link_libraries(${name} PRIVATE ${ARG_DEPS} aurora::new_delete)
     engine_configure_target(${name})
 
     # In Visual Studio, it runs from the executable folder.

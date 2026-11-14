@@ -7,7 +7,7 @@ Aurora is a 3D game engine written from scratch in C++20 as a learning project. 
 ## Goals
 
 - **Learn how an engine works by building its architecture by hand.** The platform layer (window, input, files, time), math, physics, the rendering hardware interface (RHI) over DirectX 12, the renderer, the ECS, the asset system and cooker, reflection, the job system, the console and cvars, events, animation, particles and the editor are all written from scratch.
-- **Use libraries only for specialized domains** that teach little about engine architecture. None of these are integrated yet:
+- **Use libraries only for specialized domains** that teach little about engine architecture. mimalloc and doctest are integrated; the others come with the steps that need them:
 
 | Library | Use |
 |---|---|
@@ -102,7 +102,7 @@ AuroraEngine/
 ├── cmake/
 │   └── EngineBuildHelpers.cmake  Compiler flags, precompiled header, engine_add_layer(), engine_add_executable()
 ├── engine/
-│   ├── core/                     Types, logging, assertions
+│   ├── core/                     Types, logging, assertions, memory
 │   └── platform/                 Placeholder (Stage 1, step 2)
 ├── tests/
 │   ├── framework/                Test main (doctest) and CHECK_ASSERTS
@@ -172,6 +172,22 @@ AURORA_ASSERT(closed);
 Assertions are for programming errors. Expected failures, such as a missing file, are reported through return values.
 
 `aurora::set_assert_handler()` replaces what happens after a failure is logged: the handler returns whether to break into the debugger. The test runner installs a handler that counts failures instead of breaking, so tests can check that an assert fires with `CHECK_ASSERTS(statement)`. `AURORA_FATAL` always aborts, whatever the handler returns.
+
+### `core/memory`
+
+```cpp
+VirtualBuffer buffer;                       // reserved address space that grows by commit
+if (buffer.reserve(1_GB) && buffer.ensure_committed(64_MB)) { /* buffer.data() never moves */ }
+
+void* block = AURORA_ALLOC(256, 64, MemoryTag::Core);   // records file and line in Debug
+heap::free(block, MemoryTag::Core);
+heap::report_leaks();                       // live memory per tag; live callsites in Debug
+```
+
+- `vm::` wraps the operating system's virtual memory (reserve, commit, decommit, release). It is the only Windows-specific code in `core`.
+- `VirtualBuffer` reserves a large address range and commits pages as it grows, so its base address never changes. Arenas, pools and dense arrays will be built on it.
+- The heap is [mimalloc](https://github.com/microsoft/mimalloc) with per-tag statistics (live bytes, live blocks, total allocations). The global `new` and `delete` are replaced in every engine executable and counted under `MemoryTag::General`, so standard containers show up in the statistics.
+- In Debug builds the heap records the file and line of each `AURORA_ALLOC`, detects frees with the wrong tag or of unknown pointers, and fills freed memory with `0xDD`.
 
 ## Target architecture
 

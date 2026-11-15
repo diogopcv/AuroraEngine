@@ -21,9 +21,9 @@ void free(void* ptr, MemoryTag tag);
 
 TagStats stats(MemoryTag tag);
 
-// Logs live memory per tag and, in Debug builds, live blocks grouped by callsite.
-// Returns the number of live blocks across all tags.
-usize report_leaks();
+// Debug builds: logs live blocks grouped by callsite. No-op otherwise.
+// The full report, including other memory sources, is memory::report_leaks (memory_report.h).
+void log_live_callsites();
 
 } // namespace aurora::heap
 

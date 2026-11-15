@@ -179,13 +179,21 @@ Assertions are for programming errors. Expected failures, such as a missing file
 VirtualBuffer buffer;                       // reserved address space that grows by commit
 if (buffer.reserve(1_GB) && buffer.ensure_committed(64_MB)) { /* buffer.data() never moves */ }
 
+Arena frame(64_MB, MemoryTag::Core);        // linear allocator: push, mark/rewind, reset
+float* temp = frame.push_array<float>(1024);
+{
+    ScratchScope s = scratch();             // per-thread scratch, rewound at the end of the scope
+    void* work = s.arena().push(4_KB);
+}
+
 void* block = AURORA_ALLOC(256, 64, MemoryTag::Core);   // records file and line in Debug
 heap::free(block, MemoryTag::Core);
-heap::report_leaks();                       // live memory per tag; live callsites in Debug
+memory::report_leaks();                     // live memory per tag; live callsites in Debug
 ```
 
 - `vm::` wraps the operating system's virtual memory (reserve, commit, decommit, release). It is the only Windows-specific code in `core`.
-- `VirtualBuffer` reserves a large address range and commits pages as it grows, so its base address never changes. Arenas, pools and dense arrays will be built on it.
+- `VirtualBuffer` reserves a large address range and commits pages as it grows, so its base address never changes. Committed memory is counted per tag.
+- `Arena` is a linear allocator on a `VirtualBuffer`: allocations are freed all at once with `reset` or back to a mark with `rewind`. Each thread has two scratch arenas (`scratch()`), and `ArenaRing<N>` keeps one arena per frame in flight. Running past an arena's reservation is a fatal error.
 - The heap is [mimalloc](https://github.com/microsoft/mimalloc) with per-tag statistics (live bytes, live blocks, total allocations). The global `new` and `delete` are replaced in every engine executable and counted under `MemoryTag::General`, so standard containers show up in the statistics.
 - In Debug builds the heap records the file and line of each `AURORA_ALLOC`, detects frees with the wrong tag or of unknown pointers, and fills freed memory with `0xDD`.
 

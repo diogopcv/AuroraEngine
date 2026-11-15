@@ -1,11 +1,9 @@
 #include "test/aurora_test.h"
 
-#include "core/log.h"
 #include "core/memory/align.h"
 #include "core/memory/heap.h"
 
 #include <new>
-#include <string>
 #include <vector>
 
 using namespace aurora;
@@ -13,37 +11,6 @@ using namespace aurora;
 // Heap statistics are global and never reset: tests compare values before and after (D43).
 
 namespace {
-
-struct LeakReportCapture {
-    bool        enabled = false;
-    std::string text;
-};
-
-LeakReportCapture g_report;
-
-void report_sink(const LogMessage& message, void* user_data) {
-    auto* capture = static_cast<LeakReportCapture*>(user_data);
-    if (capture->enabled) {
-        capture->text.append(message.text);
-        capture->text.push_back('\n');
-    }
-}
-
-struct ScopedReportCapture {
-    ScopedReportCapture() {
-        static const bool registered = [] {
-            logging::add_sink(report_sink, &g_report);
-            return true;
-        }();
-        static_cast<void>(registered);
-        g_report.text.clear();
-        g_report.enabled = true;
-    }
-    ~ScopedReportCapture() { g_report.enabled = false; }
-
-    ScopedReportCapture(const ScopedReportCapture&) = delete;
-    ScopedReportCapture& operator=(const ScopedReportCapture&) = delete;
-};
 
 struct alignas(64) CacheLine {
     u8 bytes[64];
@@ -120,23 +87,6 @@ TEST_CASE("freeing with the wrong tag asserts and keeps the statistics right") {
         CHECK_ASSERTS(heap::free(ptr, MemoryTag::Debug));
         CHECK(heap::stats(MemoryTag::Core).live_blocks == core_before.live_blocks);
         CHECK(heap::stats(MemoryTag::Debug).live_blocks == debug_before.live_blocks);
-    }
-}
-
-TEST_CASE("a deliberate leak is reported with file and line") {
-    ScopedReportCapture capture;
-    const i32 line = __LINE__ + 1;
-    void* leak = AURORA_ALLOC(64, 16, MemoryTag::Debug);
-    REQUIRE(leak != nullptr);
-
-    const usize live = heap::report_leaks();
-    heap::free(leak, MemoryTag::Debug);
-
-    CHECK(live >= 1);
-    CHECK(g_report.text.find("tag Debug has") != std::string::npos);
-    if constexpr (AURORA_DEBUG) {
-        const std::string callsite = "heap_tests.cpp(" + std::to_string(line) + "): 1 blocks";
-        CHECK(g_report.text.find(callsite) != std::string::npos);
     }
 }
 

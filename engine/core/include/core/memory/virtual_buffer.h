@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/memory/memory_tag.h"
 #include "core/types.h"
 
 namespace aurora {
@@ -16,7 +17,7 @@ public:
     VirtualBuffer(const VirtualBuffer&) = delete;
     VirtualBuffer& operator=(const VirtualBuffer&) = delete;
 
-    [[nodiscard]] bool reserve(usize capacity);
+    [[nodiscard]] bool reserve(usize capacity, MemoryTag tag);
 
     [[nodiscard]] bool ensure_committed(usize size);
 
@@ -28,11 +29,20 @@ public:
     usize capacity() const { return capacity_; }
     usize committed() const { return committed_; }
     bool  is_reserved() const { return base_ != nullptr; }
+    MemoryTag tag() const { return tag_; }
 
 private:
     u8*   base_      = nullptr;
     usize capacity_  = 0;
     usize committed_ = 0;
+    MemoryTag tag_   = MemoryTag::General;
 };
+
+namespace vm {
+
+// Bytes committed through VirtualBuffers with this tag.
+usize committed_bytes(MemoryTag tag);
+
+} // namespace vm
 
 } // namespace aurora

@@ -4,6 +4,8 @@ engine_add_tests(core
         assert_tests.cpp
         virtual_memory_tests.cpp
         heap_tests.cpp
+        arena_tests.cpp
+        memory_report_tests.cpp
         framework_selftests.cpp)
 
 add_test(NAME core_tests.selftest.exit_code

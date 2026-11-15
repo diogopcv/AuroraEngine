@@ -20,14 +20,18 @@ engine_add_layer(core
     SOURCES
         src/log.cpp
         src/assert.cpp
+        src/memory/arena.cpp
         src/memory/heap.cpp
+        src/memory/memory_report.cpp
         src/memory/virtual_buffer.cpp
         src/win32/virtual_memory.cpp
         include/core/types.h
         include/core/log.h
         include/core/assert.h
         include/core/memory/align.h
+        include/core/memory/arena.h
         include/core/memory/heap.h
+        include/core/memory/memory_report.h
         include/core/memory/memory_tag.h
         include/core/memory/virtual_buffer.h
         include/core/memory/virtual_memory.h

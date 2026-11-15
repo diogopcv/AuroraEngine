@@ -98,7 +98,7 @@ bool forget(const void* ptr, MemoryTag& tag) {
     return true;
 }
 
-void report_callsites() {
+void log_callsites() {
     std::vector<Callsite, MiAllocator<Callsite>> live;
     {
         Registry& r = registry();
@@ -196,23 +196,10 @@ TagStats stats(MemoryTag tag) {
     };
 }
 
-usize report_leaks() {
-    usize total_blocks = 0;
-    for (usize i = 0; i < memory_tag_count; ++i) {
-        const MemoryTag tag = static_cast<MemoryTag>(i);
-        const TagStats s = stats(tag);
-        total_blocks += s.live_blocks;
-        if (s.live_blocks > 0) {
-            AURORA_LOG_WARN("memory: tag {} has {} live blocks, {} bytes", memory_tag_name(tag), s.live_blocks, s.live_bytes);
-        }
-    }
-
+void log_live_callsites() {
 #if AURORA_HEAP_CALLSITES
-    if (total_blocks > 0) {
-        report_callsites();
-    }
+    log_callsites();
 #endif
-    return total_blocks;
 }
 
 } // namespace aurora::heap

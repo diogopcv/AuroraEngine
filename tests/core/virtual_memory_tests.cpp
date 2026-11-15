@@ -72,7 +72,7 @@ TEST_SUITE("virtual_buffer") {
 
 TEST_CASE("reserve 1 GB, grow by commit, base address never changes") {
     VirtualBuffer buffer;
-    REQUIRE(buffer.reserve(1_GB));
+    REQUIRE(buffer.reserve(1_GB, MemoryTag::Core));
     CHECK(buffer.capacity() >= 1_GB);
     CHECK(buffer.committed() == 0);
 
@@ -92,7 +92,7 @@ TEST_CASE("reserve 1 GB, grow by commit, base address never changes") {
 
 TEST_CASE("committed size is rounded to pages and never shrinks") {
     VirtualBuffer buffer;
-    REQUIRE(buffer.reserve(1_MB));
+    REQUIRE(buffer.reserve(1_MB, MemoryTag::Core));
     REQUIRE(buffer.ensure_committed(1));
     CHECK(buffer.committed() == vm::page_size());
     REQUIRE(buffer.ensure_committed(vm::page_size() + 1));
@@ -103,7 +103,7 @@ TEST_CASE("committed size is rounded to pages and never shrinks") {
 
 TEST_CASE("committing past the capacity fails and leaves the buffer unchanged") {
     VirtualBuffer buffer;
-    REQUIRE(buffer.reserve(64_KB));
+    REQUIRE(buffer.reserve(64_KB, MemoryTag::Core));
     REQUIRE(buffer.ensure_committed(4_KB));
     const usize before = buffer.committed();
     CHECK_FALSE(buffer.ensure_committed(buffer.capacity() + 1));
@@ -112,7 +112,7 @@ TEST_CASE("committing past the capacity fails and leaves the buffer unchanged") 
 
 TEST_CASE("decommit_all keeps the reservation and recommitted memory is zero") {
     VirtualBuffer buffer;
-    REQUIRE(buffer.reserve(1_MB));
+    REQUIRE(buffer.reserve(1_MB, MemoryTag::Core));
     REQUIRE(buffer.ensure_committed(8_KB));
     u8* const base = buffer.data();
     base[100] = 42;
@@ -128,7 +128,7 @@ TEST_CASE("decommit_all keeps the reservation and recommitted memory is zero") {
 
 TEST_CASE("move transfers the reservation") {
     VirtualBuffer a;
-    REQUIRE(a.reserve(1_MB));
+    REQUIRE(a.reserve(1_MB, MemoryTag::Core));
     REQUIRE(a.ensure_committed(vm::page_size()));
     u8* const base = a.data();
 
@@ -139,7 +139,7 @@ TEST_CASE("move transfers the reservation") {
     CHECK(b.committed() == vm::page_size());
 
     VirtualBuffer c;
-    REQUIRE(c.reserve(64_KB));
+    REQUIRE(c.reserve(64_KB, MemoryTag::Core));
     c = std::move(b);
     CHECK(c.data() == base);
     CHECK_FALSE(b.is_reserved());
@@ -147,20 +147,45 @@ TEST_CASE("move transfers the reservation") {
 
 TEST_CASE("release empties the buffer, which can be reserved again") {
     VirtualBuffer buffer;
-    REQUIRE(buffer.reserve(64_KB));
+    REQUIRE(buffer.reserve(64_KB, MemoryTag::Core));
     buffer.release();
     CHECK_FALSE(buffer.is_reserved());
     CHECK(buffer.capacity() == 0);
-    REQUIRE(buffer.reserve(64_KB));
+    REQUIRE(buffer.reserve(64_KB, MemoryTag::Core));
     CHECK(buffer.is_reserved());
+}
+
+TEST_CASE("committed bytes are counted per tag") {
+    const usize before = vm::committed_bytes(MemoryTag::Debug);
+    usize after_commit = 0;
+    usize after_decommit = 0;
+    usize after_move = 0;
+    {
+        VirtualBuffer buffer;
+        REQUIRE(buffer.reserve(1_MB, MemoryTag::Debug));
+        REQUIRE(buffer.ensure_committed(3 * vm::page_size()));
+        after_commit = vm::committed_bytes(MemoryTag::Debug);
+        buffer.decommit_all();
+        after_decommit = vm::committed_bytes(MemoryTag::Debug);
+        REQUIRE(buffer.ensure_committed(vm::page_size()));
+        VirtualBuffer moved = std::move(buffer);
+        after_move = vm::committed_bytes(MemoryTag::Debug);
+        CHECK(moved.tag() == MemoryTag::Debug);
+    }
+    const usize after_release = vm::committed_bytes(MemoryTag::Debug);
+
+    CHECK(after_commit == before + 3 * vm::page_size());
+    CHECK(after_decommit == before);
+    CHECK(after_move == before + vm::page_size());
+    CHECK(after_release == before);
 }
 
 TEST_CASE("reserving twice asserts and fails") {
     VirtualBuffer buffer;
-    REQUIRE(buffer.reserve(64_KB));
+    REQUIRE(buffer.reserve(64_KB, MemoryTag::Core));
     u8* const base = buffer.data();
     bool ok = true;
-    CHECK_ASSERTS(ok = buffer.reserve(64_KB));
+    CHECK_ASSERTS(ok = buffer.reserve(64_KB, MemoryTag::Core));
     if constexpr (AURORA_ASSERTS_ENABLED) {
         CHECK_FALSE(ok);
     }

@@ -84,6 +84,11 @@ public:
 
     bool contains(Handle<T> handle) const { return is_live(handle); }
 
+    // No generation check and no slot read: for callers that already guarantee the slot is alive
+    // (RefPool's strong references). Reads only the base address, which never changes, so it is
+    // safe from any thread while the object is alive.
+    T* get_unchecked(u32 index) const { return object(index); }
+
     // A stale or invalid handle is a bug: assert, then ignore.
     void destroy(Handle<T> handle) {
         AURORA_ASSERT(iterating_ == 0, "handle pool [{}]: destroy during for_each", memory_tag_name(tag()));

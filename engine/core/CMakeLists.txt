@@ -37,6 +37,7 @@ engine_add_layer(core
         include/core/memory/memory_report.h
         include/core/memory/memory_tag.h
         include/core/memory/pool.h
+        include/core/memory/ref_pool.h
         include/core/memory/virtual_buffer.h
         include/core/memory/virtual_memory.h
 )

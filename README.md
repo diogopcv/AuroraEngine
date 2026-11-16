@@ -191,6 +191,10 @@ Handle<Mesh> cube = meshes.create(/* constructor arguments */);
 meshes.destroy(cube);
 Mesh* gone = meshes.get(cube);              // nullptr: the handle is stale
 
+RefPool<Texture> textures(1024, MemoryTag::Core);       // shared ownership, for assets
+Ref<Texture> albedo = textures.create(/* ... */);       // copies and destruction are thread-safe
+textures.collect();                         // owner thread: destroys objects whose last Ref was dropped
+
 void* block = AURORA_ALLOC(256, 64, MemoryTag::Core);   // records file and line in Debug
 heap::free(block, MemoryTag::Core);
 memory::report_leaks();                     // live memory per tag; live callsites in Debug
@@ -200,6 +204,7 @@ memory::report_leaks();                     // live memory per tag; live callsit
 - `VirtualBuffer` reserves a large address range and commits pages as it grows, so its base address never changes. Committed memory is counted per tag.
 - `Arena` is a linear allocator on a `VirtualBuffer`: allocations are freed all at once with `reset` or back to a mark with `rewind`. Each thread has two scratch arenas (`scratch()`), and `ArenaRing<N>` keeps one arena per frame in flight. Running past an arena's reservation is a fatal error.
 - `Pool` hands out fixed-size blocks with stable addresses. `HandlePool<T>` stores objects referenced by `Handle<T>`, an index plus a generation: when an object is destroyed its slot's generation changes, so old handles return `nullptr` instead of pointing at a new object.
+- `RefPool<T>` adds reference counting for assets, the one case of shared ownership. A `Ref<T>` can be copied and destroyed on any thread and gives read-only access; when the last one is dropped, the object is queued and destroyed later by the pool's owner in `collect()`, so destructors always run on the owner's thread.
 - The heap is [mimalloc](https://github.com/microsoft/mimalloc) with per-tag statistics (live bytes, live blocks, total allocations). The global `new` and `delete` are replaced in every engine executable and counted under `MemoryTag::General`, so standard containers show up in the statistics.
 - In Debug builds the heap records the file and line of each `AURORA_ALLOC`, detects frees with the wrong tag or of unknown pointers, and fills freed memory with `0xDD`.
 

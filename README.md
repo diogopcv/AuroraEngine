@@ -2,7 +2,7 @@
 
 Aurora is a 3D game engine written from scratch in C++20 as a learning project. It targets Windows through the Win32 API and renders with DirectX 12.
 
-> **Status:** Stage 1 (Foundation), step 1: the core layer. Build system, logging, assertions, unit tests and the memory infrastructure (virtual memory, heap, arenas, pools, handles, reference counting, dense arrays) are in place. Next: the shutdown memory report, console variables and events. See the [roadmap](docs/roadmap.md).
+> **Status:** Stage 1 (Foundation), step 1: the core layer. Build system, logging, assertions, unit tests and the memory infrastructure (virtual memory, heap, arenas, pools, handles, reference counting, dense arrays, leak reports) are in place. Next: console variables and events. See the [roadmap](docs/roadmap.md).
 
 **Documentation:** [docs/](docs/README.md) has a guide for each part of the engine: the ideas behind it, how to use it, when to use it and when not to, and its restrictions.
 
@@ -50,6 +50,9 @@ The sandbox exercises the core layer. Optional arguments show the failure paths:
 |---|---|---|
 | `--assert` | Logs the failed assertion and breaks into the debugger | Assertion is compiled out; the program continues |
 | `--fatal` | Logs the error, breaks into the debugger, then aborts | Logs the error and aborts |
+| `--leak` | Leaks 64 bytes; the shutdown report lists them with file and line | Leaks 64 bytes; the shutdown report lists the tag |
+
+At exit, the sandbox prints the [shutdown memory report](docs/core/memory/memory-report.md).
 
 ## Architecture
 

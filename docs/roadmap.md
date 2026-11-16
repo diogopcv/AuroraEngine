@@ -24,8 +24,8 @@ Six stages and seventeen steps. Each step depends only on the previous ones and 
 | 1.7 | `Pool` and `HandlePool` | A stale handle returns `nullptr`; a reused slot gets a new generation; destroying a pool with live objects asserts | Done |
 | 1.8 | `RefPool` and `Ref` | The last `Ref` frees the object; a multithreaded copy stress test keeps counts correct | Done |
 | 1.9 | `DenseArray` | Swap-remove keeps it dense; one million elements without reallocation | Done |
-| 1.10 | Shutdown report | A clean sandbox exit reports zero live bytes; an injected leak is reported | Next |
-| 1.11 | Console variables and commands | Variables set from a config file, the command line and code; queued writes applied at frame start | |
+| 1.10 | Shutdown report | A clean sandbox exit reports zero live bytes; an injected leak is reported | Done |
+| 1.11 | Console variables and commands | Variables set from a config file, the command line and code; queued writes applied at frame start | Next |
 | 1.12 | `EventQueue` and `Delegate` | Events written in one phase are read in the next; stale subscription handles are detected | |
 
 ## All steps

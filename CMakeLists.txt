@@ -23,10 +23,13 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT s
 
 include(cmake/EngineBuildHelpers.cmake)
 
+if(ENGINE_BUILD_TESTS)
+    enable_testing()
+endif()
+
 add_subdirectory(engine)
 add_subdirectory(apps/sandbox)
 
 if(ENGINE_BUILD_TESTS)
-    enable_testing()
     add_subdirectory(tests)
 endif()

@@ -20,14 +20,31 @@ LeakSummary report_leaks() {
         }
 
         const usize committed = vm::committed_bytes(tag);
-        summary.committed_bytes += committed;
-        if (committed > 0) {
+        if (committed == 0) {
+            continue;
+        }
+        if (tag == MemoryTag::Scratch) {
+            summary.scratch_committed_bytes += committed;
+            AURORA_LOG_INFO("memory: thread scratch arenas hold {} bytes of committed virtual memory (not a leak)", committed);
+        } else {
+            summary.committed_bytes += committed;
             AURORA_LOG_WARN("memory: tag {} has {} bytes of committed virtual memory", memory_tag_name(tag), committed);
         }
     }
 
     if (summary.heap_blocks > 0) {
         heap::log_live_callsites();
+    }
+    return summary;
+}
+
+LeakSummary shutdown_report() {
+    const LeakSummary summary = report_leaks();
+    if (summary.clean()) {
+        AURORA_LOG_INFO("memory: no leaks");
+    } else {
+        AURORA_LOG_WARN("memory: LEAKS at shutdown: {} heap blocks ({} bytes), {} bytes of committed virtual memory",
+                        summary.heap_blocks, summary.heap_bytes, summary.committed_bytes);
     }
     return summary;
 }

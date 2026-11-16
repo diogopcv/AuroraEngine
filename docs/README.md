@@ -29,7 +29,7 @@ The lowest layer. Everything else builds on it. Overview: [core/README.md](core/
 | [Pools and handles](core/memory/pools.md) | `Pool`, `Handle<T>`, `HandlePool<T>` | Implemented |
 | [Reference counting](core/memory/ref-pool.md) | `RefPool<T>`, `Ref<T>`, deferred release | Implemented |
 | [Dense array](core/memory/dense-array.md) | `DenseArray<T>`, swap-remove | Implemented |
-| [Memory report](core/memory/memory-report.md) | Leak report | Implemented |
+| [Memory report](core/memory/memory-report.md) | Leak report, shutdown report | Implemented |
 | CVars and commands | Console variables, commands, config | Planned (1.11) |
 | Events | `EventQueue`, `Delegate` | Planned (1.12) |
 

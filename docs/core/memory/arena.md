@@ -97,7 +97,7 @@ With a single scratch arena, `out` and `temp` would be the same arena; `find_pat
 
 ### Lifetime
 
-The scratch arenas of a thread are created the first time that thread calls `scratch()`: each reserves 64 MB of address space and commits nothing until used. A thread that never calls `scratch()` pays nothing. They are destroyed when the thread ends. For the main thread, that happens after `main` returns, so a memory report at the end of `main` still sees them.
+The scratch arenas of a thread are created the first time that thread calls `scratch()`: each reserves 64 MB of address space and commits nothing until used. A thread that never calls `scratch()` pays nothing. They are destroyed when the thread ends. For the main thread, that happens after `main` returns, so the [shutdown report](memory-report.md) at the end of `main` still sees them. That is why scratch arenas have their own tag, `Scratch`: the report lists their memory apart and never counts it as a leak.
 
 ## The frame ring
 

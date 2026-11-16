@@ -62,8 +62,9 @@ Every allocation carries a `MemoryTag` that names the subsystem it belongs to:
 | Tag | Used by |
 |---|---|
 | `General` | Global `new`/`delete`: standard containers, foreign code |
-| `Core` | Core's own allocations, scratch arenas |
+| `Core` | Core's own allocations |
 | `Debug` | Debug tools, tests |
+| `Scratch` | Per-thread [scratch arenas](arena.md#scratch-arenas); reported apart and never counted as a leak |
 
 Tags are added when a subsystem's first user appears (`Render`, `Physics`, `Assets` and so on arrive with their steps). Tags make the memory report say "Assets: 120 MB" instead of "300 MB somewhere".
 

@@ -64,6 +64,29 @@ TEST_CASE("a deliberate leak is reported with file and line") {
     }
 }
 
+TEST_CASE("scratch memory is reported apart and is not a leak") {
+    {
+        ScratchScope s = scratch();
+        static_cast<void>(s.arena().push(10));
+    }
+    ScopedReportCapture capture;
+    const memory::LeakSummary summary = memory::report_leaks();
+    CHECK(summary.scratch_committed_bytes >= Arena::commit_chunk);
+    CHECK(g_report.text.find("thread scratch arenas hold") != std::string::npos);
+    CHECK(g_report.text.find("tag Scratch has") == std::string::npos);
+}
+
+TEST_CASE("clean means no heap blocks and no committed memory outside scratch") {
+    memory::LeakSummary summary;
+    summary.scratch_committed_bytes = 64_KB;
+    CHECK(summary.clean());
+    summary.committed_bytes = 4_KB;
+    CHECK_FALSE(summary.clean());
+    summary.committed_bytes = 0;
+    summary.heap_blocks = 1;
+    CHECK_FALSE(summary.clean());
+}
+
 TEST_CASE("committed virtual memory is reported") {
     ScopedReportCapture capture;
     memory::LeakSummary summary;

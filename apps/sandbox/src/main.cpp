@@ -1,5 +1,8 @@
 #include "core/assert.h"
 #include "core/log.h"
+#include "core/memory/arena.h"
+#include "core/memory/heap.h"
+#include "core/memory/memory_report.h"
 #include "core/types.h"
 
 #include <atomic>
@@ -55,8 +58,27 @@ int main(int argc, char** argv) {
         AURORA_FATAL("unrecoverable error example (code {})", 42);
     }
 
+    {
+        ScratchScope s = scratch();
+        u64* squares = s.arena().push_array<u64>(1000);
+        u64 sum = 0;
+        for (u64 i = 0; i < 1000; ++i) {
+            squares[i] = i * i;
+            sum += squares[i];
+        }
+        AURORA_LOG_INFO("scratch: the first 1000 squares add up to {}", sum);
+    }
+
+    if (has_arg(argc, argv, "--leak")) {
+        void* leak = AURORA_ALLOC(64, 16, MemoryTag::Debug);
+        static_cast<void>(leak);
+        AURORA_LOG_INFO("leaking 64 bytes on purpose");
+    }
+
     const i32 warnings = g_problems.warnings.load();
     const i32 errors   = g_problems.errors.load();
     AURORA_LOG_INFO("end: {} warning(s), {} error(s)", warnings, errors);
+
+    memory::shutdown_report();
     return 0;
 }

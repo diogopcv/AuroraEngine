@@ -54,8 +54,8 @@ void Arena::rewind(ArenaMark mark) {
 
 ScratchScope scratch(const Arena* conflict) {
     thread_local Arena arenas[2] = {
-        Arena(scratch_reserve_bytes, MemoryTag::Core),
-        Arena(scratch_reserve_bytes, MemoryTag::Core),
+        Arena(scratch_reserve_bytes, MemoryTag::Scratch),
+        Arena(scratch_reserve_bytes, MemoryTag::Scratch),
     };
     return ScratchScope(&arenas[0] == conflict ? arenas[1] : arenas[0]);
 }

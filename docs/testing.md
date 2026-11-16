@@ -105,6 +105,8 @@ and `add_subdirectory(math)` in `tests/CMakeLists.txt`. A new test file is one l
 | `core_tests.selftest.exit_code` | the executable returns an error (`WILL_FAIL`) |
 | `core_tests.selftest.location` | the output contains `framework_selftests.cpp(line)` or `framework_selftests.cpp:line` |
 
-Two entries are needed because CTest ignores the exit code when it matches the output against a pattern. Together they prove that a failing test makes the run fail and points at the right line, which is what a broken custom `main` would silently stop doing.
+Two entries are needed because CTest ignores the exit code when it matches the output against a pattern.
+
+The same technique tests the [shutdown memory report](core/memory/memory-report.md): `sandbox.shutdown.clean` runs the sandbox and expects `memory: no leaks`; `sandbox.shutdown.leak` runs `sandbox --leak` and expects the injected block to be reported. Together they prove that a failing test makes the run fail and points at the right line, which is what a broken custom `main` would silently stop doing.
 
 The intentionally failing tests are marked `doctest::no_breaks()`, so a debugger does not stop on them.

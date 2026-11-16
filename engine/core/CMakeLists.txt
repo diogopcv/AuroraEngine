@@ -32,6 +32,7 @@ engine_add_layer(core
         include/core/handle.h
         include/core/memory/align.h
         include/core/memory/arena.h
+        include/core/memory/dense_array.h
         include/core/memory/handle_pool.h
         include/core/memory/heap.h
         include/core/memory/memory_report.h

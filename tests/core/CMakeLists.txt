@@ -9,6 +9,7 @@ engine_add_tests(core
         pool_tests.cpp
         handle_pool_tests.cpp
         ref_pool_tests.cpp
+        dense_array_tests.cpp
         framework_selftests.cpp)
 
 add_test(NAME core_tests.selftest.exit_code

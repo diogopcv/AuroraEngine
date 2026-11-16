@@ -43,7 +43,7 @@ endfunction()
 #
 #   engine_add_layer(platform
 #       SOURCES src/a.cpp src/b.cpp
-#       DEPS    engine::core)
+#       DEPS    aurora::core)
 #
 # Expects the structure:
 #   <layer>/include/<layer>/*.h public headers -> #include "<layer>/x.h"

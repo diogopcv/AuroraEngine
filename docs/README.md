@@ -1,0 +1,40 @@
+# Aurora documentation
+
+Guides to how the engine is built and how to use each part of it. Each subsystem guide explains the ideas behind the code, shows how to use it, says when to use it and when not to, and lists its guarantees, restrictions and pitfalls.
+
+Only code that exists is documented here. Planned systems appear as status in the [roadmap](roadmap.md).
+
+## Start here
+
+| Document | Read it to learn |
+|---|---|
+| [Architecture](architecture.md) | How the engine is layered, how a frame runs, which threads exist, and the rules for concurrency and ownership |
+| [Building](build.md) | Toolchain, presets, compiler flags, the precompiled header, and how to add a layer or an executable |
+| [Testing](testing.md) | How tests are written and run, how to test asserts, and how to add tests for a new layer |
+| [Roadmap](roadmap.md) | Stages, steps and sub-steps, with "done when" criteria and status |
+
+## Core layer
+
+The lowest layer. Everything else builds on it. Overview: [core/README.md](core/README.md).
+
+| Document | Contents | Status |
+|---|---|---|
+| [Types](core/types.md) | Numeric types, size literals, platform assumptions | Implemented |
+| [Logging](core/logging.md) | `AURORA_LOG_*`, levels, sinks, formatting | Implemented |
+| [Assertions](core/assertions.md) | `AURORA_ASSERT`, `AURORA_FATAL`, `AURORA_UNREACHABLE`, the assert handler | Implemented |
+| [Memory: choosing an allocator](core/memory/README.md) | Which allocator to use for what, memory tags, ownership | Implemented |
+| [Virtual memory](core/memory/virtual-memory.md) | Reserve and commit, `VirtualBuffer` | Implemented |
+| [Heap](core/memory/heap.md) | mimalloc, `AURORA_ALLOC`, global `new`/`delete`, Debug callsite tracking | Implemented |
+| [Arena](core/memory/arena.md) | Linear allocation, marks, scratch arenas, the frame ring | Implemented |
+| [Pools and handles](core/memory/pools.md) | `Pool`, `Handle<T>`, `HandlePool<T>` | Implemented |
+| [Reference counting](core/memory/ref-pool.md) | `RefPool<T>`, `Ref<T>`, deferred release | Implemented |
+| [Dense array](core/memory/dense-array.md) | `DenseArray<T>`, swap-remove | Implemented |
+| [Memory report](core/memory/memory-report.md) | Leak report | Implemented |
+| CVars and commands | Console variables, commands, config | Planned (1.11) |
+| Events | `EventQueue`, `Delegate` | Planned (1.12) |
+
+## Conventions used in these documents
+
+- Code and identifiers are in `monospace`. Diagrams of structure use Mermaid; diagrams of memory use plain text.
+- "Owner thread" means the one thread allowed to change a structure. "Any thread" means safe to call concurrently.
+- "Fatal" means the program logs the error and aborts in every build. "Asserts" means a programming error that is checked in Debug builds and compiled out in Release.

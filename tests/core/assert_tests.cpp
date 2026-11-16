@@ -36,7 +36,7 @@ TEST_CASE("the condition is evaluated only when asserts are enabled") {
     CHECK(evaluations == (AURORA_ASSERTS_ENABLED ? 1 : 0));
 }
 
-TEST_CASE("CHECK_ASSERTS reports a statement that does not assert" * doctest::should_fail()) {
+TEST_CASE("CHECK_ASSERTS reports a statement that does not assert" * doctest::should_fail() * doctest::no_breaks()) {
     if constexpr (AURORA_ASSERTS_ENABLED) {
         bool ok = true;
         CHECK_ASSERTS(AURORA_ASSERT(ok));

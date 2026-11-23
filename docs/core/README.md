@@ -30,6 +30,7 @@ engine/core/
 | Logging | `core/log.h` | [logging.md](logging.md) |
 | Assertions | `core/assert.h` | [assertions.md](assertions.md) |
 | Memory | `core/memory/*.h`, `core/handle.h` | [memory/README.md](memory/README.md) |
+| String IDs | — | Planned (1.11) |
 | Console variables and commands | — | Planned (1.11) |
 | Events | — | Planned (1.12) |
 

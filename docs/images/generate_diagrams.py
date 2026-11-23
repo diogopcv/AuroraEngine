@@ -116,87 +116,85 @@ def architecture(theme):
     x0, x1 = 20, WIDTH - 20
     cx0 = x0 + label_w
     cw = x1 - 12 - cx0
-    unit = (cw - 2 * gap_h) / 3
 
-    # Each chip: (module, systems, span in thirds of the row, monospace title).
+    def span_row(svg, y, items, columns):
+        unit = (cw - gap_h * (columns - 1)) / columns
+        x = cx0
+        for title, systems, span, mono, ramp in items:
+            w = unit * span + gap_h * (span - 1)
+            svg.chip(round(x, 1), y, round(w, 1), chip_h, title, systems, ramp, mono=mono)
+            x += w + gap_h
+
+    P, T = "purple", "teal"
+    # Each chip: (module, systems, span in columns, monospace title, ramp); then the column count.
     layers = [
         ("Tools", "Programs over the engine", [
-            [("apps/cooker", "sources to cooked files", 1, True),
-             ("apps/editor", "hierarchy, inspector, gizmos", 1, True),
-             ("Console UI", "ImGui panel in the overlay", 1, False)]]),
-        ("Game and world", "Entities and the frame", [
-            [("Game code", "gameplay systems", 1, False),
-             ("world", "ECS, hierarchy, scheduler, extract systems, main loop", 2, True)]]),
-        ("Servers", "Handle-based APIs", [
-            [("render", "server, frame packets, debug draw", 1, True),
-             ("assets", "loader, IO thread, hot reload", 1, True),
-             ("physics", "bodies, broadphase, solver", 1, True)],
-            [("animation", "sampling, blending, skinning", 1, True),
-             ("particles", "emitters, SoA simulation", 1, True),
-             ("audio", "voices, mixer on miniaudio", 1, True)]]),
-        ("Graphics", "Thin RHI", [
-            [("rhi", "interface, bindless descriptors, barriers", 1.5, True),
-             ("rhi/d3d12", "DirectX 12 backend", 1.5, True)]]),
+            ([("apps/cooker", "sources to cooked files", 1, True, P),
+              ("apps/editor", "hierarchy, inspector, gizmos", 1, True, P)], 2)]),
+        ("Game and world", "Composition and the frame", [
+            ([("app", "engine, main loop", 1, True, P), ("world", "ECS, scheduler, extract", 1, True, P),
+              ("debug", "overlay, console, stats", 1, True, P), ("Game code", "gameplay systems", 1, False, P)], 4)]),
+        ("Servers", "Independent of each other", [
+            ([("render", "server, culling, debug draw", 1, True, P),
+              ("physics", "bodies, queries, solver", 1, True, P),
+              ("animation", "sampling, blending, skinning", 1, True, P)], 3),
+            ([("particles", "emitters, SoA simulation", 1, True, P),
+              ("audio", "voices, 3D mixing", 1, True, P)], 3)]),
+        ("Graphics, assets", "Used by the servers", [
+            ([("rhi", "interface, bindless, barriers", 1, True, P),
+              ("rhi/d3d12", "DirectX 12 backend", 1, True, P),
+              ("assets", "IO thread, RefPool, loaders", 1, True, P)], 3)]),
         ("Base", "Built on core", [
-            [("platform", "window, input, files, time", 1, True),
-             ("math", "vectors, matrices, quaternions", 1, True),
-             ("reflect", "manual type registration", 1, True)],
-            [("jobs", "thread pool, scheduler", 1, True),
-             ("asset_formats", "cooked layouts, no logic", 1, True)]]),
-    ]
-    core_rows = [
-        [("Types", "numeric vocabulary"), ("Log", "lock-free sinks"),
-         ("Assert", "handler, fatal"), ("Handle<T>", "index + generation")],
-        [("Memory", "allocators, tags"), ("CVars", "and commands"),
-         ("Events", "typed queues"), ("SPSC queue", "lock-free ring")],
+            ([("platform", "window, input, files, time", 1, True, P),
+              ("math", "vectors, matrices, quaternions", 1, True, P),
+              ("reflect", "manual type registration", 1, True, P)], 3),
+            ([("jobs", "thread pool, scheduler", 1, True, P),
+              ("asset_formats", "cooked layouts, no logic", 1, True, P)], 3)]),
+        ("Core", "Lowest library", [
+            ([("Types", "numeric types", 1, False, T), ("Log", "lock-free sinks", 1, False, T),
+              ("Assert", "handler, fatal", 1, False, T), ("Handle<T>", "runtime refs", 1, False, T),
+              ("StringId", "64-bit name hash", 1, False, T)], 5),
+            ([("Memory", "allocators, tags", 1, False, T), ("CVars", "and commands", 1, False, T),
+              ("Events", "typed queues", 1, False, T), ("SPSC queue", "lock-free ring", 1, False, T)], 5)]),
     ]
 
-    def height(nrows):
-        return nrows * chip_h + (nrows - 1) * gap_v + 2 * pad
+    def height(nrows, extra=0):
+        return nrows * chip_h + (nrows - 1) * gap_v + 2 * pad + extra
 
-    heights = [height(len(rows)) for _, _, rows in layers] + [height(2) + 22]
-    total = 20 + sum(heights) + 12 * len(layers) + 30 + 56 + 46
+    heights = [height(len(rows), 22 if name == "Core" else 0) for name, _, rows in layers]
+    total = 20 + sum(heights) + 12 * (len(layers) - 1) + 30 + 56 + 46
     svg = Svg(theme, total, "Aurora Engine architecture",
               "Six layers, from tools down to core, and the modules in each. Each module is a static "
-              "library that depends only on the layers below it.")
+              "library that depends only on the layers below it; servers do not depend on each other.")
 
     y = 20
+    memory_x = memory_bottom = None
     for (name, sub, rows), h in zip(layers, heights):
         svg.panel(x0, y, x1 - x0, h, name, sub, title_y=y + h / 2 - 9)
         ry = y + pad
-        for items in rows:
-            x = cx0
-            for title, systems, span, mono in items:
-                w = unit * span + gap_h * (span - 1)
-                svg.chip(round(x, 1), ry, round(w, 1), chip_h, title, systems, mono=mono)
-                x += w + gap_h
+        if name == "Core":
+            svg.text(cx0, y + 20, "core", 13, 600, svg.t["text"], mono=True)
+            svg.text(cx0 + 44, y + 20, "one library: vocabulary and infrastructure for every module",
+                     12, 400, svg.t["muted"])
+            ry = y + 34
+        for items, columns in rows:
+            span_row(svg, ry, items, columns)
+            if items[0][0] == "Memory":
+                memory_x = cx0 + (cw - gap_h * (columns - 1)) / columns / 2
+                memory_bottom = ry + chip_h
             ry += chip_h + gap_v
         y += h + 12
 
-    h = heights[-1]
-    svg.panel(x0, y, x1 - x0, h, "Core", "Lowest library", title_y=y + h / 2 - 9)
-    svg.text(cx0, y + 20, "core", 13, 600, svg.t["text"], mono=True)
-    svg.text(cx0 + 44, y + 20, "one library: vocabulary and infrastructure for every module", 12, 400,
-             svg.t["muted"])
-    ry = y + 34
-    core_memory_x = None
-    for items in core_rows:
-        row(svg, cx0, cw, ry, chip_h, items, ramp="teal")
-        if items[0][0] == "Memory":
-            core_memory_x = cx0 + ((cw - 36) / 4) / 2
-        ry += chip_h + gap_v
-    core_bottom = y + h
-
-    box_y = core_bottom + 30
+    box_y = y - 12 + 30
     os_w = 260
-    os_x = core_memory_x - os_w / 2
-    svg.arrow(f"M{core_memory_x} {ry - gap_v} L{core_memory_x} {box_y - 2}")
+    os_x = max(x0, memory_x - os_w / 2)
+    svg.arrow(f"M{memory_x} {memory_bottom} L{memory_x} {box_y - 2}")
     svg.chip(os_x, box_y, os_w, 56, "Windows (Win32)", "virtual memory only", "ghost", dashed=True)
     tx = os_x + os_w + 24
     svg.chip(tx, box_y, x1 - tx, 56, "tests/  (outside the stack)",
              "one executable per layer, plus test_main", "ghost", dashed=True)
     svg.text(x0, box_y + 56 + 26, "Each module is a static library and can include only the headers "
-             "of the layers below it.", 12, 400, svg.t["muted"])
+             "of the layers below it. World connects the servers.", 12, 400, svg.t["muted"])
     return svg
 
 
@@ -212,7 +210,8 @@ def core(theme):
 
     svg.panel(x0, 20, x1 - x0, 104, "Foundations")
     row(svg, inner0, iw, 56, 54, [("Types", "u8 .. f64, size literals"), ("Log", "lock-free sinks"),
-                                  ("Assert", "handler, fatal"), ("Handle<T>", "index + generation")])
+                                  ("Assert", "handler, fatal"), ("Handle<T>", "index + generation"),
+                                  ("StringId", "64-bit name hash")])
 
     svg.panel(x0, 140, x1 - x0, 376, "Memory", "Every allocation has an owner and a tag")
     gap = 14
@@ -359,15 +358,15 @@ def assets(theme):
     svg.panel(x0, 258, x1 - x0, 140, "Runtime", "Loading never stalls the frame")
     ry = 314
     svg.chip(xs[2], ry, w, h, "IO thread", "blocking reads", sub2="folder watch for hot reload", ramp="coral")
-    svg.chip(xs[1], ry, w, h, "Assets server", "RefPool, finalized on main", sub2="at frame start")
-    svg.chip(xs[0], ry, w, h, "Render server", "creates GPU resources", sub2="on the render thread")
+    svg.chip(xs[1], ry, w, h, "assets", "RefPool, loader registry", sub2="finalized at frame start", mono=True)
+    svg.chip(xs[0], ry, w, h, "Render server", "mesh and texture loaders", sub2="create GPU resources")
     svg.arrow(f"M{mids[1]} {fy + 50} L{mids[1]} {ry - 3}")
     svg.arrow(f"M{mids[2]} {oy + h} L{mids[2]} {ry - 3}")
     for i in (2, 1):
         svg.arrow(f"M{xs[i] - 3} {ry + h / 2} L{xs[i - 1] + w + 3} {ry + h / 2}")
     svg.text(mids[2] + 10, 246, "read", 12, 400, svg.t["muted"])
     svg.text((xs[1] + w + xs[2]) / 2, ry + h / 2 - 12, "completions", 12, 400, svg.t["muted"], "middle")
-    svg.text((xs[0] + w + xs[1]) / 2, ry + h / 2 - 12, "commands", 12, 400, svg.t["muted"], "middle")
+    svg.text((xs[0] + w + xs[1]) / 2, ry + h / 2 - 12, "calls loader", 12, 400, svg.t["muted"], "middle")
 
     svg.text(x0, 428, "The cooker and the runtime share only the asset formats module, so the cooker "
              "never links runtime code.", 12, 400, svg.t["muted"])

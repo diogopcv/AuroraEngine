@@ -30,6 +30,7 @@ The lowest layer. Everything else builds on it. Overview: [core/README.md](core/
 | [Reference counting](core/memory/ref-pool.md) | `RefPool<T>`, `Ref<T>`, deferred release | Implemented |
 | [Dense array](core/memory/dense-array.md) | `DenseArray<T>`, swap-remove | Implemented |
 | [Memory report](core/memory/memory-report.md) | Leak report, shutdown report | Implemented |
+| String IDs | `StringId`, compile-time name hashes | Planned (1.11) |
 | CVars and commands | Console variables, commands, config | Planned (1.11) |
 | Events | `EventQueue`, `Delegate` | Planned (1.12) |
 

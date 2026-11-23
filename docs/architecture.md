@@ -11,12 +11,14 @@ Aurora is organized in layers. Each layer is a static library that depends only 
 
 | Layer | Modules | Responsibility |
 |---|---|---|
-| Tools | `editor`, `cooker`, console UI | Programs and overlays that use the engine as a library. The game never depends on the editor or the cooker. |
-| Game and world | game code, `world` | Entities, components, systems, the transform hierarchy, event queues, the extract systems and the frame loop |
-| Servers | `render`, `physics`, `audio`, `assets`, `animation`, `particles` | Self-contained subsystems with low-level, handle-based APIs; `render` also defines the frame-packet format |
-| Graphics abstraction | `rhi` | A thin interface over DirectX 12: resources, bindless descriptors, barriers, command lists |
+| Tools | `editor`, `cooker` | Programs that use the engine as a library. The game never depends on them. |
+| Game and world | `app`, `world`, `debug`, game code | `app` owns every server and runs the main loop; `world` holds entities, components, systems, the hierarchy, event queues and the extract systems; `debug` is the in-game overlay and console |
+| Servers | `render`, `physics`, `animation`, `particles`, `audio` | Self-contained subsystems with low-level, handle-based APIs. A server never depends on another server; the world connects them. `render` also defines the frame-packet format |
+| Graphics and assets | `rhi`, `assets` | `rhi`: a thin interface over DirectX 12 (resources, bindless descriptors, barriers, command lists). `assets`: loading on an IO thread, reference counting, hot reload and a registry where each server installs the loaders for its own asset types |
 | Base | `math`, `jobs`, `reflect`, `platform`, `asset_formats` | Math library, thread pool, type registration, window, input, files and time, cooked-format definitions |
-| Core | `core` | Types, log, assert, handles, memory, console variables and commands, events |
+| Core | `core` | Types, log, assert, handles, string IDs, memory, console variables and commands, events |
+
+Servers sit side by side and never include each other. Anything that combines two servers, such as drawing physics contacts with the debug draw of `render`, is a system in `world`. Resources sit below the servers: `assets` knows how to read, count and reload assets but not what a texture or a clip is; `render`, `animation` and `audio` register loaders for their own types.
 
 `asset_formats` holds only the definitions of the cooked file formats, with no logic, and depends only on `core`. Both the cooker and the runtime asset server link it, so the cooker never links runtime code.
 
@@ -35,11 +37,12 @@ The order in which layers are *implemented* is not the layer order. A system get
 1. **Generational handles instead of pointers.** Objects refer to each other through `Handle<T>`, an index plus a generation. A handle to a destroyed object is detected instead of pointing at whatever now lives in its slot. See [Pools and handles](core/memory/pools.md).
 2. **Explicit ownership, no garbage collector.** Every allocation has an owner that frees it: a pool, an arena, a level. Reference counting is used only for assets, the one case of shared ownership with an unknown last owner. See [Choosing an allocator](core/memory/README.md).
 3. **ECS with a transform hierarchy.** Components live in dense arrays; systems run over queries; a parent/child component keeps scene building comfortable.
-4. **Servers with handle-based APIs.** `render.create_mesh(...)` returns a handle; the world stores handles in components; systems synchronize world and servers each frame.
-5. **An extract step between the world and the renderer.** The renderer never reads the world. At a fixed point in the frame, the data rendering needs is copied into a frame packet. The extract systems live in `world` and write the frame-packet format that `render` defines, so `render` never includes `world`.
-6. **A thin RHI over DirectX 12**, extracted from a working triangle rather than designed up front.
-7. **Typed event queues** instead of a global event bus.
-8. **Cooked assets only at runtime.** Source formats (glTF, PNG, HLSL) are converted offline; the runtime loads binary, GPU-ready data.
+4. **Servers with handle-based APIs.** `render.create_mesh(...)` returns a handle; the world stores handles in components; systems synchronize world and servers each frame. Servers do not depend on each other.
+5. **One owner for the whole engine.** `app::Engine` holds every server as a member, in dependency order. `init()` brings them up in that order and returns `false` on failure; C++ destroys members in reverse order, so shutdown needs no list of its own. Nothing is a global object with a constructor that runs before `main`.
+6. **An extract step between the world and the renderer.** The renderer never reads the world. At a fixed point in the frame, the data rendering needs is copied into a frame packet. The extract systems live in `world` and write the frame-packet format that `render` defines, so `render` never includes `world`.
+7. **A thin RHI over DirectX 12**, extracted from a working triangle rather than designed up front.
+8. **Typed event queues** instead of a global event bus.
+9. **Cooked assets only at runtime.** Source formats (glTF, PNG, HLSL) are converted offline; the runtime loads binary, GPU-ready data.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="images/asset-pipeline-dark.svg">
@@ -56,6 +59,7 @@ Platform events -> Input -> Fixed-step update (0..N times) -> Extract -> Render 
 
 - The simulation runs at a fixed step of 1/60 s with an accumulator. Frame time is clamped to 0.25 s, so a long stall does not cause a burst of catch-up steps.
 - Console variable writes and commands queued during a frame are applied at the start of the next one.
+- The loop lives in `app::Engine::run`. After it returns, the servers are destroyed in reverse order, their threads are joined, and the shutdown memory report runs last.
 
 ## Threads
 

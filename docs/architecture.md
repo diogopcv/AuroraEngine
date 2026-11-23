@@ -12,8 +12,8 @@ Aurora is organized in layers. Each layer is a static library that depends only 
 | Layer | Modules | Responsibility |
 |---|---|---|
 | Tools | `editor`, `cooker`, console UI | Programs and overlays that use the engine as a library. The game never depends on the editor or the cooker. |
-| Game and world | game code, `world` | Entities, components, systems, the transform hierarchy, event queues and the frame loop |
-| Servers | `render`, `physics`, `audio`, `assets`, `animation`, `particles` | Self-contained subsystems with low-level, handle-based APIs |
+| Game and world | game code, `world` | Entities, components, systems, the transform hierarchy, event queues, the extract systems and the frame loop |
+| Servers | `render`, `physics`, `audio`, `assets`, `animation`, `particles` | Self-contained subsystems with low-level, handle-based APIs; `render` also defines the frame-packet format |
 | Graphics abstraction | `rhi` | A thin interface over DirectX 12: resources, bindless descriptors, barriers, command lists |
 | Base | `math`, `jobs`, `reflect`, `platform`, `asset_formats` | Math library, thread pool, type registration, window, input, files and time, cooked-format definitions |
 | Core | `core` | Types, log, assert, handles, memory, console variables and commands, events |
@@ -36,7 +36,7 @@ The order in which layers are *implemented* is not the layer order. A system get
 2. **Explicit ownership, no garbage collector.** Every allocation has an owner that frees it: a pool, an arena, a level. Reference counting is used only for assets, the one case of shared ownership with an unknown last owner. See [Choosing an allocator](core/memory/README.md).
 3. **ECS with a transform hierarchy.** Components live in dense arrays; systems run over queries; a parent/child component keeps scene building comfortable.
 4. **Servers with handle-based APIs.** `render.create_mesh(...)` returns a handle; the world stores handles in components; systems synchronize world and servers each frame.
-5. **An extract step between the world and the renderer.** The renderer never reads the world. At a fixed point in the frame, the data rendering needs is copied into a frame packet.
+5. **An extract step between the world and the renderer.** The renderer never reads the world. At a fixed point in the frame, the data rendering needs is copied into a frame packet. The extract systems live in `world` and write the frame-packet format that `render` defines, so `render` never includes `world`.
 6. **A thin RHI over DirectX 12**, extracted from a working triangle rather than designed up front.
 7. **Typed event queues** instead of a global event bus.
 8. **Cooked assets only at runtime.** Source formats (glTF, PNG, HLSL) are converted offline; the runtime loads binary, GPU-ready data.

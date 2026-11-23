@@ -1,115 +1,111 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="880" height="836" viewBox="0 0 880 836" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="876" viewBox="0 0 880 876" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
 <title>Aurora Engine architecture</title>
-<desc>Six layers, from tools down to core. Each layer is a static library that depends only on the layers below it. Core calls the operating system for virtual memory only; tests sit outside the stack.</desc>
+<desc>Six layers, from tools down to core, and the modules in each. Each module is a static library that depends only on the layers below it.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#8c959f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
-<rect x="20" y="20" width="840" height="74" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
-<text x="36" y="48.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Tools</text>
-<text x="36" y="66.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Separate programs</text>
-<rect x="190.0" y="32" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="295.65" y="49.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Console UI</text>
-<text x="295.65" y="67.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">ImGui overlay</text>
-<rect x="413.3" y="32" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="518.95" y="49.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Asset cooker</text>
-<text x="518.95" y="67.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">sources to cooked files</text>
-<rect x="636.7" y="32" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="742.35" y="49.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Editor</text>
-<text x="742.35" y="67.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">hierarchy, inspector</text>
-<rect x="20" y="106" width="840" height="74" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
-<text x="36" y="134.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Game and world</text>
-<text x="36" y="152.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Game code lives here</text>
-<rect x="190.0" y="118" width="155.5" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="267.75" y="135.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Main loop</text>
-<text x="267.75" y="153.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">fixed step</text>
-<rect x="357.5" y="118" width="155.5" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="435.25" y="135.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">ECS</text>
-<text x="435.25" y="153.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">entities, queries</text>
-<rect x="525.0" y="118" width="155.5" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="602.75" y="135.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Hierarchy</text>
-<text x="602.75" y="153.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">parent and child</text>
-<rect x="692.5" y="118" width="155.5" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="770.25" y="135.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Extract</text>
-<text x="770.25" y="153.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">frame packets</text>
-<rect x="20" y="192" width="840" height="134" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
-<text x="36" y="250.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Servers</text>
-<text x="36" y="268.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Handle-based APIs</text>
-<rect x="190.0" y="204" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="295.65" y="221.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Render</text>
-<text x="295.65" y="239.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">own thread</text>
-<rect x="413.3" y="204" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="518.95" y="221.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Assets</text>
-<text x="518.95" y="239.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">IO thread, hot reload</text>
-<rect x="636.7" y="204" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="742.35" y="221.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Physics</text>
-<text x="742.35" y="239.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">rigid bodies</text>
-<rect x="190.0" y="264" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="295.65" y="281.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Animation</text>
-<text x="295.65" y="299.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">GPU skinning</text>
-<rect x="413.3" y="264" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="518.95" y="281.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Particles</text>
-<text x="518.95" y="299.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">SoA, billboards</text>
-<rect x="636.7" y="264" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="742.35" y="281.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Audio</text>
-<text x="742.35" y="299.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">over miniaudio</text>
-<rect x="20" y="338" width="840" height="74" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
-<text x="36" y="366.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Graphics</text>
-<text x="36" y="384.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Thin RHI</text>
-<rect x="190.0" y="350" width="323.0" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="351.5" y="367.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">RHI interface</text>
-<text x="351.5" y="385.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">bindless descriptors</text>
-<rect x="525.0" y="350" width="323.0" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="686.5" y="367.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">rhi/d3d12</text>
-<text x="686.5" y="385.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">DirectX 12 backend</text>
-<rect x="20" y="424" width="840" height="134" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
-<text x="36" y="482.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Base</text>
-<text x="36" y="500.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Built on core</text>
-<rect x="190.0" y="436" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="295.65" y="453.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Platform</text>
-<text x="295.65" y="471.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">window, input, files</text>
-<rect x="413.3" y="436" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="518.95" y="453.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Math</text>
-<text x="518.95" y="471.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">vectors, quaternions</text>
-<rect x="636.7" y="436" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="742.35" y="453.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Reflection</text>
-<text x="742.35" y="471.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">manual registration</text>
-<rect x="190.0" y="496" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="295.65" y="513.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Jobs</text>
-<text x="295.65" y="531.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">thread pool</text>
-<rect x="413.3" y="496" width="211.3" height="50" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="518.95" y="513.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Asset formats</text>
-<text x="518.95" y="531.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">cooked layouts, no logic</text>
-<rect x="20" y="570" width="840" height="134" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
-<text x="36" y="628.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Core</text>
-<text x="36" y="646.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Lowest library</text>
-<rect x="190.0" y="582" width="155.5" height="50" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
-<text x="267.75" y="599.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Types</text>
-<text x="267.75" y="617.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">u8 .. f64</text>
-<rect x="357.5" y="582" width="155.5" height="50" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
-<text x="435.25" y="599.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Log</text>
-<text x="435.25" y="617.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">lock-free sinks</text>
-<rect x="525.0" y="582" width="155.5" height="50" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
-<text x="602.75" y="599.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Assert</text>
-<text x="602.75" y="617.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">handler, fatal</text>
-<rect x="692.5" y="582" width="155.5" height="50" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
-<text x="770.25" y="599.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Handle&lt;T&gt;</text>
-<text x="770.25" y="617.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">index + generation</text>
-<rect x="190.0" y="642" width="155.5" height="50" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
-<text x="267.75" y="659.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Memory</text>
-<text x="267.75" y="677.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">allocators, tags</text>
-<rect x="357.5" y="642" width="155.5" height="50" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
-<text x="435.25" y="659.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">CVars</text>
-<text x="435.25" y="677.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">and commands</text>
-<rect x="525.0" y="642" width="155.5" height="50" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
-<text x="602.75" y="659.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Events</text>
-<text x="602.75" y="677.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">typed queues</text>
-<rect x="692.5" y="642" width="155.5" height="50" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
-<text x="770.25" y="659.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">SPSC queue</text>
-<text x="770.25" y="677.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">lock-free ring</text>
-<path d="M267.75 692 L267.75 732" fill="none" stroke="#8c959f" stroke-width="1.4" marker-end="url(#arrow)"/>
-<rect x="137.75" y="734" width="260" height="56" rx="6" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="5 4"/>
-<text x="267.75" y="754.0" font-size="13" font-weight="600" fill="#1f2328" text-anchor="middle" dominant-baseline="central">Windows (Win32)</text>
-<text x="267.75" y="772.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="middle" dominant-baseline="central">virtual memory only</text>
-<rect x="421.75" y="734" width="438.25" height="56" rx="6" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="5 4"/>
-<text x="640.875" y="754.0" font-size="13" font-weight="600" fill="#1f2328" text-anchor="middle" dominant-baseline="central">tests/  (outside the stack)</text>
-<text x="640.875" y="772.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="middle" dominant-baseline="central">one executable per layer, plus test_main</text>
-<text x="20" y="816" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Each layer is a static library and can include only the headers of the layers below it.</text>
+<rect x="20" y="20" width="840" height="76" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<text x="36" y="49.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Tools</text>
+<text x="36" y="67.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Programs over the engine</text>
+<rect x="190" y="32" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="295.65" y="50.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">apps/cooker</text>
+<text x="295.65" y="68.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">sources to cooked files</text>
+<rect x="413.3" y="32" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="518.95" y="50.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">apps/editor</text>
+<text x="518.95" y="68.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">hierarchy, inspector, gizmos</text>
+<rect x="636.7" y="32" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="742.35" y="50.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Console UI</text>
+<text x="742.35" y="68.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">ImGui panel in the overlay</text>
+<rect x="20" y="108" width="840" height="76" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<text x="36" y="137.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Game and world</text>
+<text x="36" y="155.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Entities and the frame</text>
+<rect x="190" y="120" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="295.65" y="138.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Game code</text>
+<text x="295.65" y="156.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">gameplay systems</text>
+<rect x="413.3" y="120" width="434.7" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="630.65" y="138.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">world</text>
+<text x="630.65" y="156.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">ECS, hierarchy, scheduler, extract systems, main loop</text>
+<rect x="20" y="196" width="840" height="138" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<text x="36" y="256.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Servers</text>
+<text x="36" y="274.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Handle-based APIs</text>
+<rect x="190" y="208" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="295.65" y="226.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">render</text>
+<text x="295.65" y="244.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">server, frame packets, debug draw</text>
+<rect x="413.3" y="208" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="518.95" y="226.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">assets</text>
+<text x="518.95" y="244.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">loader, IO thread, hot reload</text>
+<rect x="636.7" y="208" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="742.35" y="226.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">physics</text>
+<text x="742.35" y="244.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">bodies, broadphase, solver</text>
+<rect x="190" y="270" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="295.65" y="288.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">animation</text>
+<text x="295.65" y="306.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">sampling, blending, skinning</text>
+<rect x="413.3" y="270" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="518.95" y="288.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">particles</text>
+<text x="518.95" y="306.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">emitters, SoA simulation</text>
+<rect x="636.7" y="270" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="742.35" y="288.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">audio</text>
+<text x="742.35" y="306.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">voices, mixer on miniaudio</text>
+<rect x="20" y="346" width="840" height="76" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<text x="36" y="375.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Graphics</text>
+<text x="36" y="393.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Thin RHI</text>
+<rect x="190" y="358" width="323.0" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="351.5" y="376.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">rhi</text>
+<text x="351.5" y="394.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">interface, bindless descriptors, barriers</text>
+<rect x="525.0" y="358" width="323.0" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="686.5" y="376.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">rhi/d3d12</text>
+<text x="686.5" y="394.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">DirectX 12 backend</text>
+<rect x="20" y="434" width="840" height="138" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<text x="36" y="494.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Base</text>
+<text x="36" y="512.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Built on core</text>
+<rect x="190" y="446" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="295.65" y="464.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">platform</text>
+<text x="295.65" y="482.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">window, input, files, time</text>
+<rect x="413.3" y="446" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="518.95" y="464.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">math</text>
+<text x="518.95" y="482.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">vectors, matrices, quaternions</text>
+<rect x="636.7" y="446" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="742.35" y="464.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">reflect</text>
+<text x="742.35" y="482.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">manual type registration</text>
+<rect x="190" y="508" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="295.65" y="526.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">jobs</text>
+<text x="295.65" y="544.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">thread pool, scheduler</text>
+<rect x="413.3" y="508" width="211.3" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="518.95" y="526.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">asset_formats</text>
+<text x="518.95" y="544.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">cooked layouts, no logic</text>
+<rect x="20" y="584" width="840" height="160" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+<text x="36" y="655.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Core</text>
+<text x="36" y="673.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Lowest library</text>
+<text x="190" y="604" font-size="13" font-weight="600" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start" dominant-baseline="central">core</text>
+<text x="234" y="604" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">one library: vocabulary and infrastructure for every module</text>
+<rect x="190.0" y="618" width="155.5" height="52" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<text x="267.75" y="636.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Types</text>
+<text x="267.75" y="654.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">numeric vocabulary</text>
+<rect x="357.5" y="618" width="155.5" height="52" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<text x="435.25" y="636.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Log</text>
+<text x="435.25" y="654.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">lock-free sinks</text>
+<rect x="525.0" y="618" width="155.5" height="52" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<text x="602.75" y="636.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Assert</text>
+<text x="602.75" y="654.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">handler, fatal</text>
+<rect x="692.5" y="618" width="155.5" height="52" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<text x="770.25" y="636.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Handle&lt;T&gt;</text>
+<text x="770.25" y="654.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">index + generation</text>
+<rect x="190.0" y="680" width="155.5" height="52" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<text x="267.75" y="698.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Memory</text>
+<text x="267.75" y="716.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">allocators, tags</text>
+<rect x="357.5" y="680" width="155.5" height="52" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<text x="435.25" y="698.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">CVars</text>
+<text x="435.25" y="716.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">and commands</text>
+<rect x="525.0" y="680" width="155.5" height="52" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<text x="602.75" y="698.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Events</text>
+<text x="602.75" y="716.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">typed queues</text>
+<rect x="692.5" y="680" width="155.5" height="52" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<text x="770.25" y="698.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">SPSC queue</text>
+<text x="770.25" y="716.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">lock-free ring</text>
+<path d="M267.75 732 L267.75 772" fill="none" stroke="#8c959f" stroke-width="1.4" marker-end="url(#arrow)"/>
+<rect x="137.75" y="774" width="260" height="56" rx="6" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="267.75" y="794.0" font-size="13" font-weight="600" fill="#1f2328" text-anchor="middle" dominant-baseline="central">Windows (Win32)</text>
+<text x="267.75" y="812.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="middle" dominant-baseline="central">virtual memory only</text>
+<rect x="421.75" y="774" width="438.25" height="56" rx="6" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="640.875" y="794.0" font-size="13" font-weight="600" fill="#1f2328" text-anchor="middle" dominant-baseline="central">tests/  (outside the stack)</text>
+<text x="640.875" y="812.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="middle" dominant-baseline="central">one executable per layer, plus test_main</text>
+<text x="20" y="856" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Each module is a static library and can include only the headers of the layers below it.</text>
 </svg>

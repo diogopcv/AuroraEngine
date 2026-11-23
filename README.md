@@ -56,18 +56,35 @@ At exit, the sandbox prints the [shutdown memory report](docs/core/memory/memory
 
 ## Architecture
 
-```mermaid
-flowchart TB
-    tools["<b>Tools</b><br/>Editor · Asset cooker · Console UI"]
-    game["<b>Game and world</b><br/>Game code · World (ECS) · Main loop"]
-    servers["<b>Servers</b><br/>Render · Physics · Audio<br/>Assets · Animation · Particles"]
-    gfx["<b>Graphics abstraction</b><br/>RHI over DirectX 12"]
-    base["<b>Base</b><br/>Math · Jobs · Reflection · Platform"]
-    core["<b>Core</b><br/>Memory · Log and assert · CVars · Events"]
-    tools --> game --> servers --> gfx --> base --> core
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/architecture-dark.svg">
+  <img alt="Aurora's six layers, from tools down to core, with the modules in each" src="docs/images/architecture-light.svg" width="100%">
+</picture>
 
 Each layer is a static library that can include only the headers of the layers below it, which the build enforces. Objects refer to each other through generational handles; every allocation has an explicit owner; the renderer never reads the world directly; threads exchange copies, not shared state. See [Architecture](docs/architecture.md).
+
+### Inside the core layer
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/core-dark.svg">
+  <img alt="The core layer: foundations, the memory stack from RefPool down to virtual memory, and configuration and messaging" src="docs/images/core-light.svg" width="100%">
+</picture>
+
+### Threads
+
+The main thread runs the frame. The render, IO and audio threads, and later a pool of workers, receive work only through frame packets and queues.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/threads-dark.svg">
+  <img alt="The main thread's frame steps and how it talks to the IO, audio, worker and render threads" src="docs/images/threads-light.svg" width="100%">
+</picture>
+
+### Assets
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/asset-pipeline-dark.svg">
+  <img alt="Offline, the cooker turns sources into cooked files; at runtime the IO thread, the assets server and the render server load them" src="docs/images/asset-pipeline-light.svg" width="100%">
+</picture>
 
 ### Core layer (implemented)
 
@@ -82,7 +99,7 @@ Each layer is a static library that can include only the headers of the layers b
 AuroraEngine/
 ├── apps/sandbox/          Test application for the engine
 ├── cmake/                 Build helpers: flags, precompiled header, engine_add_layer(), engine_add_executable()
-├── docs/                  Architecture and subsystem guides
+├── docs/                  Architecture and subsystem guides; diagrams in docs/images/
 ├── engine/
 │   ├── core/              Types, logging, assertions, memory
 │   └── platform/          Placeholder (step 2)

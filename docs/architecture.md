@@ -4,16 +4,10 @@ Aurora is organized in layers. Each layer is a static library that depends only 
 
 ## Layers
 
-```mermaid
-flowchart TB
-    tools["<b>Tools</b><br/>Editor · Asset cooker · Console UI"]
-    game["<b>Game and world</b><br/>Game code · World (ECS) · Main loop"]
-    servers["<b>Servers</b><br/>Render · Physics · Audio<br/>Assets · Animation · Particles"]
-    gfx["<b>Graphics abstraction</b><br/>RHI over DirectX 12"]
-    base["<b>Base</b><br/>Math · Jobs · Reflection · Platform"]
-    core["<b>Core</b><br/>Memory · Log and assert · CVars · Events"]
-    tools --> game --> servers --> gfx --> base --> core
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="images/architecture-dark.svg">
+  <img alt="Aurora's six layers, from tools down to core, with the modules in each" src="images/architecture-light.svg" width="100%">
+</picture>
 
 | Layer | Modules | Responsibility |
 |---|---|---|
@@ -21,8 +15,10 @@ flowchart TB
 | Game and world | game code, `world` | Entities, components, systems, the transform hierarchy, event queues and the frame loop |
 | Servers | `render`, `physics`, `audio`, `assets`, `animation`, `particles` | Self-contained subsystems with low-level, handle-based APIs |
 | Graphics abstraction | `rhi` | A thin interface over DirectX 12: resources, bindless descriptors, barriers, command lists |
-| Base | `math`, `jobs`, `reflect`, `platform` | Math library, thread pool, type registration, window, input, files and time |
-| Core | `core` | Memory, log, assert, console variables and commands, events |
+| Base | `math`, `jobs`, `reflect`, `platform`, `asset_formats` | Math library, thread pool, type registration, window, input, files and time, cooked-format definitions |
+| Core | `core` | Types, log, assert, handles, memory, console variables and commands, events |
+
+`asset_formats` holds only the definitions of the cooked file formats, with no logic, and depends only on `core`. Both the cooker and the runtime asset server link it, so the cooker never links runtime code.
 
 Only `core` exists today. See the [roadmap](roadmap.md) for the order in which the others arrive.
 
@@ -44,6 +40,11 @@ The order in which layers are *implemented* is not the layer order. A system get
 6. **A thin RHI over DirectX 12**, extracted from a working triangle rather than designed up front.
 7. **Typed event queues** instead of a global event bus.
 8. **Cooked assets only at runtime.** Source formats (glTF, PNG, HLSL) are converted offline; the runtime loads binary, GPU-ready data.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="images/asset-pipeline-dark.svg">
+  <img alt="Offline, the cooker turns sources into cooked files; at runtime the IO thread, the assets server and the render server load them" src="images/asset-pipeline-light.svg" width="100%">
+</picture>
 
 ## Frame loop
 
@@ -68,12 +69,15 @@ Aurora uses a few threads with fixed roles, and later a pool of workers.
 | Audio | step 17 (created by miniaudio) | Mixing, in a real-time callback | Lock-free command and event queues |
 | Workers | step 17 | Nothing long-lived: jobs over ranges of data | Scheduler phases |
 
-```
-time ------------------------------------------------------------>
-Main    [ simulate+extract 3 ][ simulate+extract 4 ][ ...
-Render              [ record 2 ][ record 3 ][ record 4 ]
-GPU                        [ frame 1 ][ frame 2 ][ frame 3 ]
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="images/threads-dark.svg">
+  <img alt="The main thread's frame steps and how it talks to the IO, audio, worker and render threads" src="images/threads-light.svg" width="100%">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="images/frame-pipeline-dark.svg">
+  <img alt="While main simulates frame k+1, render records frame k and the GPU executes frame k-1" src="images/frame-pipeline-light.svg" width="100%">
+</picture>
 
 The main thread simulates frame *k+1* while the render thread records frame *k* and the GPU executes frame *k−1*. Data crossing threads is copied (frame packets, queue entries) or handed over with explicit ownership; threads never share mutable state.
 

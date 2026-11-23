@@ -8,7 +8,7 @@
 
 using namespace aurora;
 
-// Heap statistics are global and never reset: tests compare values before and after (D43).
+// Heap statistics are global and never reset: tests compare values before and after.
 
 namespace {
 

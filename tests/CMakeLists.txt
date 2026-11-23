@@ -22,7 +22,7 @@ target_compile_options(test_main PUBLIC $<$<CXX_COMPILER_ID:MSVC>:/EHsc>)
 engine_configure_target(test_main)
 set_target_properties(test_main PROPERTIES FOLDER "tests")
 
-# Creates <layer>_tests from test sources and registers each test case in CTest (D28).
+# Creates <layer>_tests from test sources and registers each test case in CTest.
 # Test sources are compiled into the executable, never into a library: the linker drops
 # unreferenced objects from static libraries, and with them the test registrations.
 #

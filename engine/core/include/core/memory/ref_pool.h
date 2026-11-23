@@ -17,7 +17,7 @@ namespace aurora {
 template <typename T>
 class RefPool;
 
-// Strong, reference-counted handle to an object of a RefPool (D51). Copying and destroying a Ref
+// Strong, reference-counted handle to an object of a RefPool. Copying and destroying a Ref
 // is safe from any thread (like std::shared_ptr, one Ref instance is not shared between threads).
 // Access is const: shared objects are immutable; the owner mutates through RefPool::get_mut.
 // A Ref must not outlive its pool.
@@ -50,7 +50,7 @@ private:
     Handle<T>   handle_ = {};
 };
 
-// Reference-counted objects for shared ownership with an unknown last owner: assets only (D06, D51).
+// Reference-counted objects for shared ownership with an unknown last owner: assets only.
 // The owner thread creates, upgrades, mutates and collects. When the last Ref is dropped, on any
 // thread, the object is queued; collect() destroys queued objects on the owner thread.
 template <typename T>

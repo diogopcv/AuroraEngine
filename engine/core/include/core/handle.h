@@ -4,7 +4,7 @@
 
 namespace aurora {
 
-// Generational reference to an engine object (D05, D50). Generation 0 is invalid, so a
+// Generational reference to an engine object. Generation 0 is invalid, so a
 // default-constructed handle is never valid. T only tags the type and may be incomplete.
 // Runtime-only: never persisted (scenes and assets use stable IDs).
 template <typename T>

@@ -14,7 +14,7 @@
 
 namespace aurora {
 
-// Contiguous array that grows in place over a VirtualBuffer (D53): growth never moves elements,
+// Contiguous array that grows in place over a VirtualBuffer: growth never moves elements,
 // so pointers and spans stay valid. swap_remove keeps it dense but does not keep the order.
 // Structural changes on the owner thread; disjoint ranges may be read and written from several
 // threads in a phase without structural changes.

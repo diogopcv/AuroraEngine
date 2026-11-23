@@ -18,6 +18,12 @@ engine/core/
 
 ## Modules
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../images/core-dark.svg">
+  <img alt="The core layer: foundations, the memory stack from RefPool down to virtual memory, and configuration and messaging" src="../images/core-light.svg" width="100%">
+</picture>
+
+
 | Module | Header | Guide |
 |---|---|---|
 | Types | `core/types.h` | [types.md](types.md) |

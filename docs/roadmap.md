@@ -1,6 +1,6 @@
 # Roadmap
 
-Six stages and seventeen steps. Each step depends only on the previous ones and has a "done when" criterion. The sequence defines the order of **first versions**: going back to a lower layer when a later step needs something is expected.
+Six stages and seventeen steps (step 9 has two parts). Each step depends only on the previous ones and has a "done when" criterion. The sequence defines the order of **first versions**: going back to a lower layer when a later step needs something is expected.
 
 ## Rules
 
@@ -25,7 +25,7 @@ Six stages and seventeen steps. Each step depends only on the previous ones and 
 | 1.8 | `RefPool` and `Ref` | The last `Ref` frees the object; a multithreaded copy stress test keeps counts correct | Done |
 | 1.9 | `DenseArray` | Swap-remove keeps it dense; one million elements without reallocation | Done |
 | 1.10 | Shutdown report | A clean sandbox exit reports zero live bytes; an injected leak is reported | Done |
-| 1.11 | String IDs, console variables and commands | `"name"_sid` hashes at compile time; variables set from a config file, the command line and code; queued writes applied at frame start | Next |
+| 1.11 | String IDs, console variables and commands | `"name"_sid` hashes at compile time; variables registered explicitly by their module and set from a config file, the command line and code; queued writes applied at frame start | Next |
 | 1.12 | `EventQueue` and `Delegate` | Events written in one phase are read in the next; stale subscription handles are detected | |
 
 ## All steps
@@ -34,16 +34,17 @@ Six stages and seventeen steps. Each step depends only on the previous ones and 
 |---|---|---|---|
 | **Stage 1** | **Foundation** | | |
 | 1 | Build and core | Sub-steps 1.1–1.12 | All sub-steps done |
-| 2 | Platform and engine loop | Win32 window (per-monitor DPI), input (scancodes, Raw Input) with action bindings, files (UTF-8 paths), time; platform events into event queues; `app::Engine` owning the systems, with the fixed-step loop | The window resizes and handles DPI changes; input actions are logged; the step counter matches real time; shutdown runs in reverse order and reports no leaks |
+| 2 | Platform and engine loop | Win32 window (per-monitor DPI), input (scancodes, Raw Input) with action bindings, files (UTF-8 paths), raw time; platform events into event queues; `app::Engine` owning the systems, with the game clock and the fixed-step loop; Tracy instrumentation; crash handler with minidumps; a Development build configuration | The window resizes and handles DPI changes; input actions are logged; the step counter matches game time, including scale and pause; Tracy shows frames and zones; a forced crash writes a minidump and flushes the log; shutdown runs in reverse order and reports no leaks |
 | 3 | Math | Documented conventions; vectors, matrices, quaternions, transforms; camera helpers with reversed-Z projection | Unit tests pass, including comparisons with DirectXMath |
 | **Stage 2** | **First image** | | |
-| 4 | DirectX 12 triangle | Device, queue, swap chain, two frames in flight with fences, shaders compiled offline, debug layer on | A triangle on screen; resizing without debug-layer errors; no leak warnings on exit |
-| 5 | RHI | Buffers and textures as handles, bindless descriptors, upload ring, barriers, command lists | The triangle again, with no DirectX 12 call outside `rhi/d3d12/` |
-| 6 | Render server | Meshes and camera through handles, frustum culling, basic directional light, debug draw; a `debug` module with the ImGui overlay and console window | A free camera around lit cubes, a debug grid, a frame-time panel and console variables editable live; cubes outside the view are not drawn |
+| 4 | DirectX 12 triangle | Device, queue, swap chain, two frames in flight with fences, shaders compiled offline, debug layer on, the DirectX 12 Agility SDK shipped next to the executable, a clear error when the GPU lacks the required features | A triangle on screen; resizing without debug-layer errors; no leak warnings on exit |
+| 5 | RHI | Buffers and textures as handles, GPU memory management, bindless descriptors, upload ring, barriers, command lists, debug names and GPU markers | The triangle again, with no DirectX 12 call outside `rhi/d3d12/` |
+| 6 | Render server | Meshes and camera through handles, frustum culling, basic directional light, debug draw; a `debug` module with the ImGui overlay, console window and a panel showing how full each pool and arena is | A free camera around lit cubes, a debug grid, a frame-time panel and console variables editable live; cubes outside the view are not drawn |
 | **Stage 3** | **World** | | |
-| 7 | ECS | Entities as handles, components in dense arrays, queries, event queues in the scheduler; systems declare which components they read and write | A thousand moving entities |
-| 8 | Hierarchy, extract and render thread | Parent/child transforms, the extract step, a render thread fed by frame packets, an option to run rendering inline | A working "solar system"; `render` includes nothing from `world`; the scene runs the same with the render thread on or off; resizing does not deadlock |
-| 9 | Assets and cooker | Asset cooker (meshes, textures, shaders, incremental), `assets` with an IO thread, reference-counted handles, hot reload and a loader registry; mesh, texture and shader loaders in `render` | A cooked glTF model renders textured; loading does not stall the frame; editing a source asset updates the running game |
+| 7 | ECS and hierarchy | Entities as handles, components in dense arrays, queries, event queues in the scheduler, parent/child transforms; systems declare which components they read and write; the first bridge module | A thousand moving entities; a "solar system" of nested transforms; `world` builds and is tested without any server |
+| 8 | Extract and render thread | Extract systems in `render_bridge`, interpolation between fixed steps, a render thread fed by frame packets, an option to run rendering inline | Motion stays smooth at any refresh rate; `render` includes nothing from `world`; the scene runs the same with the render thread on or off; resizing does not deadlock |
+| 9a | Cooker and assets | Asset cooker (meshes, textures, shaders, incremental), an asset manifest, `assets` with reference-counted handles and a loader registry, synchronous loading; mesh, texture and shader loaders in `render` | A cooked glTF model renders textured; `assets` includes no server header |
+| 9b | Asynchronous loading and hot reload | IO thread with request and completion queues, a per-frame finalization budget, folder watching, hot reload | Loading does not stall the frame; editing a source asset updates the running game |
 | **Stage 4** | **Image and simulation** | | |
 | 10 | Lighting | PBR, one shadowed directional light, point lights, HDR with tone mapping, a simple render graph | A glTF scene with shadows and distinct materials |
 | 11 | Collision | Rigid bodies, uniform-grid broadphase, sphere, plane and box narrowphase, ray and shape casts, triggers | Spheres and boxes fall and bounce, with contacts drawn by debug draw; a ray picks the body under the cursor |
@@ -53,7 +54,7 @@ Six stages and seventeen steps. Each step depends only on the previous ones and 
 | 14 | Particles | Attributes in dense arrays, one emitter type, instanced billboards, a sorted transparent pass | An emitter renders correctly blended in the lit scene |
 | **Stage 6** | **Tools and scale** | | |
 | 15 | Reflection and serialization | Manual type registration, a text scene format, level load and unload on a level heap, game states | A saved scene reloads identically; loading another level frees the previous one completely |
-| 16 | Editor | Entity hierarchy, inspector from reflection, gizmos, play and stop | A scene is built and played without touching code |
+| 16 | Editor | Entity hierarchy, inspector from reflection, gizmos, play and stop, undo and redo | A scene is built and played without touching code |
 | 17 | Jobs and audio | Thread pool, parallel systems, audio server with a lock-free audio thread and 3D attenuation and panning | The profiler shows work across cores; collisions play sounds |
 
 ## Deferred extensions

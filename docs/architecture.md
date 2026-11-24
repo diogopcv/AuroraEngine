@@ -12,13 +12,13 @@ Aurora is organized in layers. Each layer is a static library that depends only 
 | Layer | Modules | Responsibility |
 |---|---|---|
 | Tools | `editor`, `cooker` | Programs that use the engine as a library. The game never depends on them. |
-| Game and world | `app`, `world`, `debug`, game code | `app` owns every server and runs the main loop; `world` holds entities, components, systems, the hierarchy, event queues and the extract systems; `debug` is the in-game overlay and console |
+| Game and world | `app`, `world`, bridge modules, `debug`, game code | `app` owns every server, the game clock and the main loop; `world` holds entities, components, the hierarchy, the scheduler and event queues, and depends on no server; one bridge module per server (`render_bridge`, `physics_bridge`, ...) holds the systems that sync the world with that server, including extract; `debug` is the in-game overlay and console |
 | Servers | `render`, `physics`, `animation`, `particles`, `audio` | Self-contained subsystems with low-level, handle-based APIs. A server never depends on another server; the world connects them. `render` also defines the frame-packet format |
 | Graphics and assets | `rhi`, `assets` | `rhi`: a thin interface over DirectX 12 (resources, bindless descriptors, barriers, command lists). `assets`: loading on an IO thread, reference counting, hot reload and a registry where each server installs the loaders for its own asset types |
 | Base | `math`, `jobs`, `reflect`, `platform`, `asset_formats` | Math library, thread pool, type registration, window, input, files and time, cooked-format definitions |
 | Core | `core` | Types, log, assert, handles, string IDs, memory, console variables and commands, events |
 
-Servers sit side by side and never include each other. Anything that combines two servers, such as drawing physics contacts with the debug draw of `render`, is a system in `world`. Resources sit below the servers: `assets` knows how to read, count and reload assets but not what a texture or a clip is; `render`, `animation` and `audio` register loaders for their own types.
+Servers sit side by side and never include each other. The systems that connect the world to a server live in that server's bridge module; a bridge may use several servers (drawing physics contacts with the debug draw of `render`), but bridges never include each other. Components that several bridges need, such as transforms, live in `world`. Resources sit below the servers: `assets` knows how to read, count and reload assets but not what a texture or a clip is; `render`, `animation` and `audio` register loaders for their own types.
 
 `asset_formats` holds only the definitions of the cooked file formats, with no logic, and depends only on `core`. Both the cooker and the runtime asset server link it, so the cooker never links runtime code.
 
@@ -38,7 +38,7 @@ The order in which layers are *implemented* is not the layer order. A system get
 2. **Explicit ownership, no garbage collector.** Every allocation has an owner that frees it: a pool, an arena, a level. Reference counting is used only for assets, the one case of shared ownership with an unknown last owner. See [Choosing an allocator](core/memory/README.md).
 3. **ECS with a transform hierarchy.** Components live in dense arrays; systems run over queries; a parent/child component keeps scene building comfortable.
 4. **Servers with handle-based APIs.** `render.create_mesh(...)` returns a handle; the world stores handles in components; systems synchronize world and servers each frame. Servers do not depend on each other.
-5. **One owner for the whole engine.** `app::Engine` holds every server as a member, in dependency order. `init()` brings them up in that order and returns `false` on failure; C++ destroys members in reverse order, so shutdown needs no list of its own. Nothing is a global object with a constructor that runs before `main`.
+5. **One owner for the whole engine.** `app::Engine` holds every server as a member, in dependency order. `init()` brings them up in that order and returns `false` on failure; C++ destroys members in reverse order, so shutdown needs no list of its own. Nothing is a global object with a constructor that runs before `main`: even console variables are members of the modules that use them and are registered by `init()`. The engine also owns the game clock, which separates game time from real time, so time can be scaled or paused.
 6. **An extract step between the world and the renderer.** The renderer never reads the world. At a fixed point in the frame, the data rendering needs is copied into a frame packet. The extract systems live in `world` and write the frame-packet format that `render` defines, so `render` never includes `world`.
 7. **A thin RHI over DirectX 12**, extracted from a working triangle rather than designed up front.
 8. **Typed event queues** instead of a global event bus.

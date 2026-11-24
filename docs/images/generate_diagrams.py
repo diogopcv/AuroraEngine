@@ -132,8 +132,9 @@ def architecture(theme):
             ([("apps/cooker", "sources to cooked files", 1, True, P),
               ("apps/editor", "hierarchy, inspector, gizmos", 1, True, P)], 2)]),
         ("Game and world", "Composition and the frame", [
-            ([("app", "engine, main loop", 1, True, P), ("world", "ECS, scheduler, extract", 1, True, P),
-              ("debug", "overlay, console, stats", 1, True, P), ("Game code", "gameplay systems", 1, False, P)], 4)]),
+            ([("app", "engine, clocks, loop", 1, True, P), ("world", "ECS, hierarchy", 1, True, P),
+              ("*_bridge", "extract, server sync", 1, True, P), ("debug", "overlay, console", 1, True, P),
+              ("Game code", "gameplay", 1, False, P)], 5)]),
         ("Servers", "Independent of each other", [
             ([("render", "server, culling, debug draw", 1, True, P),
               ("physics", "bodies, queries, solver", 1, True, P),
@@ -155,7 +156,8 @@ def architecture(theme):
               ("Assert", "handler, fatal", 1, False, T), ("Handle<T>", "runtime refs", 1, False, T),
               ("StringId", "64-bit name hash", 1, False, T)], 5),
             ([("Memory", "allocators, tags", 1, False, T), ("CVars", "and commands", 1, False, T),
-              ("Events", "typed queues", 1, False, T), ("SPSC queue", "lock-free ring", 1, False, T)], 5)]),
+              ("Events", "typed queues", 1, False, T), ("SPSC queue", "lock-free ring", 1, False, T),
+              ("Profile", "Tracy macros", 1, False, T)], 5)]),
     ]
 
     def height(nrows, extra=0):
@@ -194,7 +196,7 @@ def architecture(theme):
     svg.chip(tx, box_y, x1 - tx, 56, "tests/  (outside the stack)",
              "one executable per layer, plus test_main", "ghost", dashed=True)
     svg.text(x0, box_y + 56 + 26, "Each module is a static library and can include only the headers "
-             "of the layers below it. World connects the servers.", 12, 400, svg.t["muted"])
+             "of the layers below it. Bridge modules connect the servers.", 12, 400, svg.t["muted"])
     return svg
 
 
@@ -243,10 +245,11 @@ def core(theme):
     svg.chip(cols[0], y_vm, vb_w, ch, "vm:: (Win32)", "VirtualAlloc and VirtualFree: the only OS code in core", "teal")
     svg.chip(cols[4], y_vm, cw, ch, "Memory report", "per-tag leaks at shutdown", "teal")
 
-    svg.panel(x0, 532, x1 - x0, 112, "Configuration and messaging")
-    row(svg, inner0, iw, 568, 58, [("CVars and commands", "applied at frame start"),
+    svg.panel(x0, 532, x1 - x0, 112, "Configuration, messaging and profiling")
+    row(svg, inner0, iw, 568, 58, [("CVars and commands", "registered by modules"),
                                    ("EventQueue, Delegate", "double-buffered events"),
-                                   ("SpscQueue", "IO and audio threads")])
+                                   ("SpscQueue", "IO and audio threads"),
+                                   ("Profile macros", "Tracy in Development")])
     svg.text(x0, 668, "Arrows mean “built on”. Arena, Pool, HandlePool and DenseArray grow "
              "inside one reservation, so pointers never move.", 12, 400, svg.t["muted"])
     return svg

@@ -61,7 +61,7 @@ At exit, the sandbox prints the [shutdown memory report](docs/core/memory/memory
   <img alt="Aurora's six layers, from tools down to core, with the modules in each" src="docs/images/architecture-light.svg" width="100%">
 </picture>
 
-Each module is a static library that can include only the headers of the layers below it, which the build enforces. Servers never depend on each other; the world connects them, and `app::Engine` owns them all. Objects refer to each other through generational handles; every allocation has an explicit owner; the renderer never reads the world directly; threads exchange copies, not shared state. See [Architecture](docs/architecture.md).
+Each module is a static library that can include only the headers of the layers below it, which the build enforces. Servers never depend on each other; small bridge modules connect them to the world, and `app::Engine` owns them all. Objects refer to each other through generational handles; every allocation has an explicit owner; the renderer never reads the world directly; threads exchange copies, not shared state. See [Architecture](docs/architecture.md).
 
 ### Inside the core layer
 
@@ -114,9 +114,9 @@ AuroraEngine/
 
 | Stage | Steps | Status |
 |---|---|---|
-| 1. Foundation | Build and core · Platform · Math | In progress (core) |
-| 2. First image | DirectX 12 triangle · RHI · Render server | |
-| 3. World | ECS · Hierarchy, extract and render thread · Assets and cooker | |
+| 1. Foundation | Build and core · Platform and engine loop · Math | In progress (core) |
+| 2. First image | DirectX 12 triangle · RHI · Render server and debug overlay | |
+| 3. World | ECS and hierarchy · Extract and render thread · Assets and cooker · Asynchronous loading | |
 | 4. Image and simulation | Lighting · Collision · Solver | |
 | 5. Motion and effects | Animation · Particles | |
 | 6. Tools and scale | Reflection and serialization · Editor · Jobs and audio | |

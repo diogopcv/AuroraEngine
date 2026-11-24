@@ -64,15 +64,18 @@
 <text x="768.8000000000001" y="461.0" font-size="13" font-weight="600" fill="#E1F5EE" text-anchor="middle" dominant-baseline="central">Memory report</text>
 <text x="768.8000000000001" y="479.0" font-size="12" font-weight="400" fill="#9FE1CB" text-anchor="middle" dominant-baseline="central">per-tag leaks at shutdown</text>
 <rect x="20" y="532" width="840" height="112" rx="10" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<text x="36" y="554" font-size="14" font-weight="600" fill="#e6edf3" text-anchor="start" dominant-baseline="central">Configuration and messaging</text>
-<rect x="36.0" y="568" width="261.3" height="58" rx="6" fill="#26215C" stroke="#AFA9EC" stroke-width="1"/>
-<text x="166.65" y="589.0" font-size="13" font-weight="600" fill="#EEEDFE" text-anchor="middle" dominant-baseline="central">CVars and commands</text>
-<text x="166.65" y="607.0" font-size="12" font-weight="400" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">applied at frame start</text>
-<rect x="309.3" y="568" width="261.3" height="58" rx="6" fill="#26215C" stroke="#AFA9EC" stroke-width="1"/>
-<text x="439.95000000000005" y="589.0" font-size="13" font-weight="600" fill="#EEEDFE" text-anchor="middle" dominant-baseline="central">EventQueue, Delegate</text>
-<text x="439.95000000000005" y="607.0" font-size="12" font-weight="400" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">double-buffered events</text>
-<rect x="582.7" y="568" width="261.3" height="58" rx="6" fill="#26215C" stroke="#AFA9EC" stroke-width="1"/>
-<text x="713.35" y="589.0" font-size="13" font-weight="600" fill="#EEEDFE" text-anchor="middle" dominant-baseline="central">SpscQueue</text>
-<text x="713.35" y="607.0" font-size="12" font-weight="400" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">IO and audio threads</text>
+<text x="36" y="554" font-size="14" font-weight="600" fill="#e6edf3" text-anchor="start" dominant-baseline="central">Configuration, messaging and profiling</text>
+<rect x="36.0" y="568" width="193.0" height="58" rx="6" fill="#26215C" stroke="#AFA9EC" stroke-width="1"/>
+<text x="132.5" y="589.0" font-size="13" font-weight="600" fill="#EEEDFE" text-anchor="middle" dominant-baseline="central">CVars and commands</text>
+<text x="132.5" y="607.0" font-size="12" font-weight="400" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">registered by modules</text>
+<rect x="241.0" y="568" width="193.0" height="58" rx="6" fill="#26215C" stroke="#AFA9EC" stroke-width="1"/>
+<text x="337.5" y="589.0" font-size="13" font-weight="600" fill="#EEEDFE" text-anchor="middle" dominant-baseline="central">EventQueue, Delegate</text>
+<text x="337.5" y="607.0" font-size="12" font-weight="400" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">double-buffered events</text>
+<rect x="446.0" y="568" width="193.0" height="58" rx="6" fill="#26215C" stroke="#AFA9EC" stroke-width="1"/>
+<text x="542.5" y="589.0" font-size="13" font-weight="600" fill="#EEEDFE" text-anchor="middle" dominant-baseline="central">SpscQueue</text>
+<text x="542.5" y="607.0" font-size="12" font-weight="400" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">IO and audio threads</text>
+<rect x="651.0" y="568" width="193.0" height="58" rx="6" fill="#26215C" stroke="#AFA9EC" stroke-width="1"/>
+<text x="747.5" y="589.0" font-size="13" font-weight="600" fill="#EEEDFE" text-anchor="middle" dominant-baseline="central">Profile macros</text>
+<text x="747.5" y="607.0" font-size="12" font-weight="400" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">Tracy in Development</text>
 <text x="20" y="668" font-size="12" font-weight="400" fill="#9198a1" text-anchor="start" dominant-baseline="central">Arrows mean “built on”. Arena, Pool, HandlePool and DenseArray grow inside one reservation, so pointers never move.</text>
 </svg>

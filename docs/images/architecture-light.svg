@@ -14,18 +14,21 @@
 <rect x="20" y="108" width="840" height="76" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
 <text x="36" y="137.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Game and world</text>
 <text x="36" y="155.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Composition and the frame</text>
-<rect x="190" y="120" width="155.5" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="267.75" y="138.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">app</text>
-<text x="267.75" y="156.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">engine, main loop</text>
-<rect x="357.5" y="120" width="155.5" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="435.25" y="138.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">world</text>
-<text x="435.25" y="156.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">ECS, scheduler, extract</text>
-<rect x="525.0" y="120" width="155.5" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="602.75" y="138.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">debug</text>
-<text x="602.75" y="156.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">overlay, console, stats</text>
-<rect x="692.5" y="120" width="155.5" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
-<text x="770.25" y="138.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Game code</text>
-<text x="770.25" y="156.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">gameplay systems</text>
+<rect x="190" y="120" width="122.0" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="251.0" y="138.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">app</text>
+<text x="251.0" y="156.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">engine, clocks, loop</text>
+<rect x="324.0" y="120" width="122.0" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="385.0" y="138.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">world</text>
+<text x="385.0" y="156.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">ECS, hierarchy</text>
+<rect x="458.0" y="120" width="122.0" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="519.0" y="138.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">*_bridge</text>
+<text x="519.0" y="156.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">extract, server sync</text>
+<rect x="592.0" y="120" width="122.0" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="653.0" y="138.0" font-size="13" font-weight="600" fill="#3C3489" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle" dominant-baseline="central">debug</text>
+<text x="653.0" y="156.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">overlay, console</text>
+<rect x="726.0" y="120" width="122.0" height="52" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="787.0" y="138.0" font-size="13" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">Game code</text>
+<text x="787.0" y="156.0" font-size="12" font-weight="400" fill="#534AB7" text-anchor="middle" dominant-baseline="central">gameplay</text>
 <rect x="20" y="196" width="840" height="138" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
 <text x="36" y="256.0" font-size="14" font-weight="600" fill="#1f2328" text-anchor="start" dominant-baseline="central">Servers</text>
 <text x="36" y="274.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Independent of each other</text>
@@ -106,6 +109,9 @@
 <rect x="592.0" y="680" width="122.0" height="52" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
 <text x="653.0" y="698.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">SPSC queue</text>
 <text x="653.0" y="716.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">lock-free ring</text>
+<rect x="726.0" y="680" width="122.0" height="52" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<text x="787.0" y="698.0" font-size="13" font-weight="600" fill="#085041" text-anchor="middle" dominant-baseline="central">Profile</text>
+<text x="787.0" y="716.0" font-size="12" font-weight="400" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">Tracy macros</text>
 <path d="M251.0 732 L251.0 772" fill="none" stroke="#8c959f" stroke-width="1.4" marker-end="url(#arrow)"/>
 <rect x="121.0" y="774" width="260" height="56" rx="6" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="5 4"/>
 <text x="251.0" y="794.0" font-size="13" font-weight="600" fill="#1f2328" text-anchor="middle" dominant-baseline="central">Windows (Win32)</text>
@@ -113,5 +119,5 @@
 <rect x="405.0" y="774" width="455.0" height="56" rx="6" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="5 4"/>
 <text x="632.5" y="794.0" font-size="13" font-weight="600" fill="#1f2328" text-anchor="middle" dominant-baseline="central">tests/  (outside the stack)</text>
 <text x="632.5" y="812.0" font-size="12" font-weight="400" fill="#59636e" text-anchor="middle" dominant-baseline="central">one executable per layer, plus test_main</text>
-<text x="20" y="856" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Each module is a static library and can include only the headers of the layers below it. World connects the servers.</text>
+<text x="20" y="856" font-size="12" font-weight="400" fill="#59636e" text-anchor="start" dominant-baseline="central">Each module is a static library and can include only the headers of the layers below it. Bridge modules connect the servers.</text>
 </svg>

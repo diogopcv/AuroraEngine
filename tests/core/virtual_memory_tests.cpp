@@ -66,6 +66,36 @@ TEST_CASE("commit with an unaligned address asserts and fails") {
     vm::release(base);
 }
 
+TEST_CASE("reserve with a size that is not a multiple of the granularity asserts and fails") {
+    void* base = nullptr;
+    CHECK_ASSERTS(base = vm::reserve(vm::allocation_granularity() + 1));
+    CHECK(base == nullptr);
+}
+
+TEST_CASE("commit with a size that is not a multiple of the page asserts and commits nothing") {
+    void* base = vm::reserve(vm::allocation_granularity());
+    REQUIRE(base != nullptr);
+    bool ok = true;
+    CHECK_ASSERTS(ok = vm::commit(base, vm::page_size() + 1));
+    if constexpr (AURORA_ASSERTS_ENABLED) {
+        CHECK_FALSE(ok);
+    }
+    vm::release(base);
+}
+
+TEST_CASE("decommit with a size that is not a multiple of the page asserts and keeps the pages") {
+    void* base = vm::reserve(vm::allocation_granularity());
+    REQUIRE(base != nullptr);
+    REQUIRE(vm::commit(base, 2 * vm::page_size()));
+    auto* bytes = static_cast<u8*>(base);
+    bytes[vm::page_size()] = 0x5A;
+    CHECK_ASSERTS(vm::decommit(base, vm::page_size() + 1));
+    if constexpr (AURORA_ASSERTS_ENABLED) {
+        CHECK(bytes[vm::page_size()] == 0x5A); // the second page is still committed
+    }
+    vm::release(base);
+}
+
 } // TEST_SUITE("virtual_memory")
 
 TEST_SUITE("virtual_buffer") {

@@ -40,30 +40,33 @@ usize allocation_granularity() {
 }
 
 void* reserve(usize size) {
-    AURORA_ASSERT(size > 0, "reserving zero bytes");
-    if (size == 0) {
+    const bool valid = size > 0 && is_aligned(size, allocation_granularity());
+    AURORA_ASSERT(valid, "reserve needs a non-zero multiple of the allocation granularity, got {} bytes", size);
+    if (!valid) {
         return nullptr;
     }
-    return VirtualAlloc(nullptr, align_up(size, allocation_granularity()), MEM_RESERVE, PAGE_NOACCESS);
+    return VirtualAlloc(nullptr, size, MEM_RESERVE, PAGE_NOACCESS);
 }
 
 bool commit(void* ptr, usize size) {
     AURORA_ASSERT(ptr != nullptr && is_aligned(ptr, page_size()), "commit needs a page-aligned address, got {}", ptr);
-    if (ptr == nullptr || !is_aligned(ptr, page_size())) {
+    AURORA_ASSERT(is_aligned(size, page_size()), "commit needs a multiple of the page size, got {} bytes", size);
+    if (ptr == nullptr || !is_aligned(ptr, page_size()) || !is_aligned(size, page_size())) {
         return false;
     }
     if (size == 0) {
         return true;
     }
-    return VirtualAlloc(ptr, align_up(size, page_size()), MEM_COMMIT, PAGE_READWRITE) != nullptr;
+    return VirtualAlloc(ptr, size, MEM_COMMIT, PAGE_READWRITE) != nullptr;
 }
 
 void decommit(void* ptr, usize size) {
     AURORA_ASSERT(ptr != nullptr && is_aligned(ptr, page_size()), "decommit needs a page-aligned address, got {}", ptr);
-    if (ptr == nullptr || size == 0) {
+    AURORA_ASSERT(is_aligned(size, page_size()), "decommit needs a multiple of the page size, got {} bytes", size);
+    if (ptr == nullptr || !is_aligned(ptr, page_size()) || !is_aligned(size, page_size()) || size == 0) {
         return;
     }
-    const BOOL ok = VirtualFree(ptr, align_up(size, page_size()), MEM_DECOMMIT);
+    const BOOL ok = VirtualFree(ptr, size, MEM_DECOMMIT);
     AURORA_ASSERT(ok != 0, "VirtualFree(MEM_DECOMMIT) failed: error {}", GetLastError());
 }
 

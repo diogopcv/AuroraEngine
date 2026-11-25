@@ -2,7 +2,8 @@
 
 #include "core/types.h"
 
-// Operating-system virtual memory
+// Operating-system virtual memory. Sizes must already be aligned: reserve takes a multiple of
+// allocation_granularity(), commit and decommit a multiple of page_size(). VirtualBuffer does the rounding.
 namespace aurora::vm {
 
 usize page_size();              // commit unit (4 KB on x64 Windows)
